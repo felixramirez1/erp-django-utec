@@ -1,0 +1,26 @@
+# Entorno virtual (NO se sube — se recrea con requirements.txt)
+env_erp/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Base de datos local
+db.sqlite3
+
+# Variables de entorno (NUNCA subir)
+.env
+
+# Archivos estáticos colectados
+staticfiles/
+
+# Media subida por usuarios
+media/
+
+# VS Code
+.vscode/
+
+# Sistema operativo
+Thumbs.db
+.DS_Store

@@ -1,0 +1,26 @@
+/* static/erp_custom.css
+   Utilidades adicionales de Fable 5 AzulERP.
+   Las variables CSS principales están definidas en base.html.
+*/
+
+/* Tarjetas clicables en la bienvenida */
+.erp-module-card {
+    transition: transform .2s, box-shadow .2s;
+    cursor: pointer;
+}
+.erp-module-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Utilidades de color */
+.text-gold   { color: var(--clr-gold)  !important; }
+.text-navy   { color: var(--clr-navy)  !important; }
+.bg-navy     { background: var(--clr-navy) !important; }
+.border-gold { border-color: var(--clr-gold) !important; }
+
+/* Código monoespaciado */
+.font-mono {
+    font-family: 'JetBrains Mono', Consolas, monospace !important;
+    font-size: .9em;
+}

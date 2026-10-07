@@ -1,0 +1,34 @@
+# render.yaml
+# Documentación: https://render.com/docs/infrastructure-as-code
+
+services:
+  - type: web
+    name: erp-django-utec
+    env: python
+    plan: free                     # plan gratuito para desarrollo académico
+    region: oregon                 # us-west región gratuita de Render
+    branch: main
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --no-input
+      python manage.py migrate
+    startCommand: gunicorn core.wsgi --workers 2 --timeout 120 --log-file -
+    healthCheckPath: /
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: core.settings_prod
+      - key: SECRET_KEY
+        generateValue: true        # Render genera una clave aleatoria segura
+      - key: DATABASE_URL
+        fromDatabase:
+          name: erp-django-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+
+databases:
+  - name: erp-django-db
+    databaseName: erp_db
+    user: erp_user
+    plan: free                     # PostgreSQL gratuito en Render (90 días)
+    region: oregon
