@@ -1,7 +1,11 @@
 asgiref==3.12.1
+dj-database-url==2.1.0
 Django==4.2
 django-environ==0.14.0
 djangorestframework==3.17.2
+gunicorn==26.2.0
+psycopg2-binary==2.9.9
 sqlparse==0.6.0
+typing_extensions==4.16.0
 tzdata==2026.5
 whitenoise==6.12.0
