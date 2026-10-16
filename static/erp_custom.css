@@ -24,3 +24,30 @@
     font-family: 'JetBrains Mono', Consolas, monospace !important;
     font-size: .9em;
 }
+/* ── JAZZMIN: Override de colores con Fable 5 AzulERP ─────────────────── */
+
+/* Sidebar color navy */
+.main-sidebar, .sidebar { background-color: #0A2342 !important; }
+
+/* Navbar color navy */
+.main-header.navbar { background-color: #0A2342 !important; }
+
+/* Brand / logo area */
+.brand-link { border-bottom: 1px solid #B8860B !important; }
+.brand-text  { color: #D4AF37 !important; font-weight: 700 !important; }
+
+/* Sidebar links */
+.nav-sidebar .nav-link { color: rgba(255,255,255,.82) !important; }
+.nav-sidebar .nav-link:hover,
+.nav-sidebar .nav-link.active {
+    background-color: #1B4F8A !important;
+    color: #FFFFFF !important;
+}
+
+/* Accent: botones y badges en dorado */
+.accent-navy .nav-sidebar .nav-link.active {
+    background-color: #B8860B !important;
+}
+
+/* Footer */
+.main-footer { border-top: 2px solid #B8860B; }

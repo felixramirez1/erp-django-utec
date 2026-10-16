@@ -13,6 +13,9 @@ Decisiones de diseño aplicadas:
     D-06: DetalleVenta.precio_unitario → almacenado (histórico).
 """
 from decimal import Decimal
+from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
+from decimal import Decimal
 
 from django.db import models
 
@@ -72,6 +75,20 @@ class DetalleVenta(models.Model):
     precio_unitario se almacena (D-06) porque el precio del producto
     puede cambiar después de la venta; se necesita el histórico exacto.
     """
+    # Agregar al inicio de ventas/models.py:
+
+# Agregar dentro de la clase DetalleVenta:
+
+    def clean(self) -> None:
+        """Validación de negocio para línea de detalle.
+
+        Raises:
+            ValidationError: si cantidad < 1.
+        """
+        if self.cantidad is not None and self.cantidad < 1:
+            raise ValidationError(
+                {'cantidad': 'La cantidad debe ser al menos 1.'}
+            )
 
     venta           = models.ForeignKey(
         Venta,
@@ -126,6 +143,22 @@ class Pedido(models.Model):
     Nota: se implementa en la Espiral 5 (W13–W15).
     Se define aquí para completar el esquema ER aprobado.
     """
+    # Agregar dentro de la clase Pedido:
+
+    def clean(self) -> None:
+        """Valida que la fecha de entrega no sea anterior al pedido.
+
+        Raises:
+            ValidationError: si fecha_entrega < fecha_pedido.date().
+        """
+        if (self.fecha_entrega and self.fecha_pedido and
+                self.fecha_entrega < self.fecha_pedido.date()):
+            raise ValidationError({
+                'fecha_entrega': (
+                    'La fecha de entrega no puede ser anterior '
+                    'a la fecha del pedido.'
+                )
+            })
 
     ESTADO_CHOICES = [
         ('pendiente',  'Pendiente de pago'),
@@ -159,9 +192,14 @@ class Pedido(models.Model):
     fecha_entrega = models.DateField(
         null=True, blank=True, verbose_name='Fecha de entrega'
     )
+    # En la clase Pedido, reemplazar el campo total_pagado:
+
     total_pagado  = models.DecimalField(
-        max_digits=10, decimal_places=2,
-        null=True, blank=True,
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(Decimal('0.00'))],  # ← agregar
         verbose_name='Total pagado'
     )
 
