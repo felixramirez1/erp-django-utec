@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ proveedor.nombre }}{% endblock %}
+{% block nav_proveedores %}active{% endblock %}
+
+{% block content %}
+<div class="erp-page-title">
+    <h2>🏭 {{ proveedor.nombre }}</h2>
+    {% if user.is_authenticated %}
+        <a href="{% url 'proveedores:editar' proveedor.pk %}"
+           class="btn-erp-gold ms-auto">Editar</a>
+    {% endif %}
+</div>
+
+<div class="erp-card">
+    <div class="erp-card-header">Datos del proveedor</div>
+    <dl class="row" style="margin:0;">
+        <dt class="col-sm-3">Contacto</dt>
+        <dd class="col-sm-9">{{ proveedor.contacto|default:"—" }}</dd>
+        <dt class="col-sm-3">Correo</dt>
+        <dd class="col-sm-9">{{ proveedor.correo }}</dd>
+        <dt class="col-sm-3">Teléfono</dt>
+        <dd class="col-sm-9">{{ proveedor.telefono|default:"—" }}</dd>
+        <dt class="col-sm-3">Estado</dt>
+        <dd class="col-sm-9">
+            {% if proveedor.activo %}
+                <span class="badge-erp-active">Activo</span>
+            {% else %}
+                <span class="badge-erp-inactive">Inactivo</span>
+            {% endif %}
+        </dd>
+    </dl>
+</div>
+
+<div class="erp-card">
+    <div class="erp-card-header">Productos suministrados</div>
+    {% if productos %}
+    <table class="erp-table">
+        <thead>
+            <tr><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th></tr>
+        </thead>
+        <tbody>
+            {% for prod in productos %}
+            <tr>
+                <td>
+                    <a href="{% url 'productos:detalle' prod.pk %}"
+                       style="color:var(--clr-royal);">{{ prod.nombre }}</a>
+                </td>
+                <td>{{ prod.categoria }}</td>
+                <td style="color:var(--clr-gold);">${{ prod.precio }}</td>
+                <td>{{ prod.stock }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color:var(--clr-muted);">Sin productos asignados.</p>
+    {% endif %}
+</div>
+
+<a href="{% url 'proveedores:lista' %}" class="btn-erp-primary">← Volver</a>
+{% endblock %}

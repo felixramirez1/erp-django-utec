@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}{{ cliente.nombre }}{% endblock %}
+{% block nav_clientes %}active{% endblock %}
+
+{% block content %}
+<div class="erp-page-title">
+    <h2>👤 {{ cliente.nombre }}</h2>
+    {% if user.is_authenticated %}
+        <a href="{% url 'clientes:editar' cliente.pk %}"
+           class="btn-erp-gold ms-auto">Editar</a>
+    {% endif %}
+</div>
+
+<div class="erp-card">
+    <div class="erp-card-header">Datos del cliente</div>
+    <dl class="row" style="margin:0;">
+        <dt class="col-sm-3">Correo</dt>
+        <dd class="col-sm-9">{{ cliente.correo }}</dd>
+        <dt class="col-sm-3">Teléfono</dt>
+        <dd class="col-sm-9">{{ cliente.telefono|default:"—" }}</dd>
+        <dt class="col-sm-3">Estado</dt>
+        <dd class="col-sm-9">
+            {% if cliente.activo %}
+                <span class="badge-erp-active">Activo</span>
+            {% else %}
+                <span class="badge-erp-inactive">Inactivo</span>
+            {% endif %}
+        </dd>
+        <dt class="col-sm-3">Registrado</dt>
+        <dd class="col-sm-9">{{ cliente.creado|date:"d/m/Y H:i" }}</dd>
+    </dl>
+</div>
+
+<div class="erp-card">
+    <div class="erp-card-header">Últimas 10 ventas</div>
+    {% if ventas %}
+    <table class="erp-table">
+        <thead>
+            <tr><th>#</th><th>Fecha</th><th>Total</th></tr>
+        </thead>
+        <tbody>
+            {% for v in ventas %}
+            <tr>
+                <td>
+                    <a href="{% url 'ventas:detalle' v.pk %}"
+                       style="color:var(--clr-royal);">#{{ v.pk }}</a>
+                </td>
+                <td>{{ v.fecha|date:"d/m/Y H:i" }}</td>
+                <td style="color:var(--clr-gold);font-weight:600;">
+                    ${{ v.total }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color:var(--clr-muted);">Este cliente aún no tiene ventas.</p>
+    {% endif %}
+</div>
+
+<a href="{% url 'clientes:lista' %}" class="btn-erp-primary">← Volver</a>
+{% endblock %}

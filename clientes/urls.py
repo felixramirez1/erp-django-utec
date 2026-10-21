@@ -1,16 +1,18 @@
-# productos/urls.py
-"""URLs de la app clientes — W02."""
+# clientes/urls.py
+"""URLs de la app clientes — W07 (Lista + Detalle)."""
 from django.urls import path
 from . import views
 
 app_name = 'clientes'
 
 urlpatterns = [
-    path('', views.index, name='inicio'),
-    # Espiral 2 W05:
-    # path('lista/',          views.ProductoListView.as_view(),   name='lista'),
-    # path('nuevo/',          views.ProductoCreateView.as_view(), name='crear'),
-    # path('<int:pk>/',       views.ProductoDetailView.as_view(), name='detalle'),
-    # path('<int:pk>/editar/',views.ProductoUpdateView.as_view(), name='editar'),
+    path('',
+         views.ClienteListView.as_view(),
+         name='lista'),
+    path('<int:cliente_id>/',
+         views.ClienteDetailView.as_view(),
+         name='detalle'),
+    # path('nuevo/',                   views.ClienteCreateView.as_view(),  name='crear'),
+    # path('<int:cliente_id>/editar/', views.ClienteUpdateView.as_view(),  name='editar'),
+    # path('<int:cliente_id>/eliminar/',views.ClienteDeleteView.as_view(), name='eliminar'),
 ]
-

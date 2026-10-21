@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Proveedores{% endblock %}
+{% block nav_proveedores %}active{% endblock %}
+
+{% block content %}
+<div class="erp-page-title">
+    <h2>🏭 Proveedores</h2>
+    {% if user.is_authenticated %}
+        <a href="{% url 'proveedores:crear' %}"
+           class="btn-erp-gold ms-auto">+ Nuevo</a>
+    {% endif %}
+</div>
+
+{% if proveedores %}
+<table class="erp-table">
+    <thead>
+        <tr>
+            <th>#</th><th>Nombre</th><th>Contacto</th>
+            <th>Correo</th><th>Estado</th>
+            {% if user.is_authenticated %}<th>Acciones</th>{% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in proveedores %}
+        <tr>
+            <td><code>{{ p.pk }}</code></td>
+            <td>
+                <a href="{% url 'proveedores:detalle' p.pk %}"
+                   style="color:var(--clr-royal);font-weight:600;">
+                    {{ p.nombre }}
+                </a>
+            </td>
+            <td>{{ p.contacto|default:"—" }}</td>
+            <td>{{ p.correo }}</td>
+            <td>
+                {% if p.activo %}
+                    <span class="badge-erp-active">Activo</span>
+                {% else %}
+                    <span class="badge-erp-inactive">Inactivo</span>
+                {% endif %}
+            </td>
+            {% if user.is_authenticated %}
+            <td>
+                <a href="{% url 'proveedores:editar' p.pk %}"
+                   class="btn-erp-primary btn-erp-sm">Editar</a>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="erp-alert-info">No hay proveedores registrados aún.</div>
+{% endif %}
+{% endblock %}

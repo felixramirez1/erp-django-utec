@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Productos{% endblock %}
+{% block nav_productos %}active{% endblock %}
+
+{% block content %}
+<div class="erp-page-title">
+    <h2>📦 Productos</h2>
+    <span style="margin-left:auto;color:var(--clr-muted);font-size:.85rem;">
+        {{ page_obj.paginator.count }} producto(s)
+    </span>
+    {% if user.is_authenticated %}
+        <a href="{% url 'productos:crear' %}" class="btn-erp-gold">
+            + Nuevo producto
+        </a>
+    {% endif %}
+</div>
+
+{% if productos %}
+<table class="erp-table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Proveedor</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            {% if user.is_authenticated %}<th>Acciones</th>{% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in productos %}
+        <tr>
+            <td><code>{{ p.pk }}</code></td>
+            <td>
+                <a href="{% url 'productos:detalle' p.pk %}"
+                   style="color:var(--clr-royal);font-weight:600;">
+                    {{ p.nombre }}
+                </a>
+            </td>
+            <td>{{ p.categoria }}</td>
+            <td>{{ p.proveedor|default:"—" }}</td>
+            <td style="font-weight:600;color:var(--clr-gold);">
+                ${{ p.precio }}
+            </td>
+            <td>
+                {% if p.stock < 5 %}
+                    <span class="badge-erp-inactive">{{ p.stock }}</span>
+                {% else %}
+                    <span class="badge-erp-active">{{ p.stock }}</span>
+                {% endif %}
+            </td>
+            {% if user.is_authenticated %}
+            <td>
+                <a href="{% url 'productos:editar' p.pk %}"
+                   class="btn-erp-primary btn-erp-sm">Editar</a>
+                <a href="{% url 'productos:eliminar' p.pk %}"
+                   class="btn-erp-danger btn-erp-sm">Eliminar</a>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Paginación -->
+{% if is_paginated %}
+<div style="display:flex;gap:.5rem;justify-content:center;margin-top:1.5rem;">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}"
+           class="btn-erp-primary btn-erp-sm">← Anterior</a>
+    {% endif %}
+    <span style="padding:.35rem .75rem;color:var(--clr-muted);font-size:.88rem;">
+        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+    </span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}"
+           class="btn-erp-primary btn-erp-sm">Siguiente →</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="erp-alert-info">No hay productos registrados aún.</div>
+{% endif %}
+{% endblock %}

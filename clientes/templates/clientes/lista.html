@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Clientes{% endblock %}
+{% block nav_clientes %}active{% endblock %}
+
+{% block content %}
+<div class="erp-page-title">
+    <h2>👥 Clientes</h2>
+    <span style="margin-left:auto;color:var(--clr-muted);font-size:.85rem;">
+        {{ page_obj.paginator.count }} cliente(s)
+    </span>
+    {% if user.is_authenticated %}
+        <a href="{% url 'clientes:crear' %}" class="btn-erp-gold">+ Nuevo</a>
+    {% endif %}
+</div>
+
+{% if clientes %}
+<table class="erp-table">
+    <thead>
+        <tr>
+            <th>#</th><th>Nombre</th><th>Correo</th>
+            <th>Teléfono</th><th>Estado</th>
+            {% if user.is_authenticated %}<th>Acciones</th>{% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in clientes %}
+        <tr>
+            <td><code>{{ c.pk }}</code></td>
+            <td>
+                <a href="{% url 'clientes:detalle' c.pk %}"
+                   style="color:var(--clr-royal);font-weight:600;">
+                    {{ c.nombre }}
+                </a>
+            </td>
+            <td>{{ c.correo }}</td>
+            <td>{{ c.telefono|default:"—" }}</td>
+            <td>
+                {% if c.activo %}
+                    <span class="badge-erp-active">Activo</span>
+                {% else %}
+                    <span class="badge-erp-inactive">Inactivo</span>
+                {% endif %}
+            </td>
+            {% if user.is_authenticated %}
+            <td>
+                <a href="{% url 'clientes:editar' c.pk %}"
+                   class="btn-erp-primary btn-erp-sm">Editar</a>
+                <a href="{% url 'clientes:eliminar' c.pk %}"
+                   class="btn-erp-danger btn-erp-sm">Eliminar</a>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if is_paginated %}
+<div style="display:flex;gap:.5rem;justify-content:center;margin-top:1.5rem;">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}"
+           class="btn-erp-primary btn-erp-sm">← Anterior</a>
+    {% endif %}
+    <span style="padding:.35rem .75rem;color:var(--clr-muted);font-size:.88rem;">
+        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+    </span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}"
+           class="btn-erp-primary btn-erp-sm">Siguiente →</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="erp-alert-info">No hay clientes registrados aún.</div>
+{% endif %}
+{% endblock %}

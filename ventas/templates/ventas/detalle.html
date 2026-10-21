@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Venta #{{ venta.pk }}{% endblock %}
+{% block nav_ventas %}active{% endblock %}
+
+{% block content %}
+<div class="erp-page-title">
+    <h2>💰 Venta #{{ venta.pk }}</h2>
+    {% if user.is_authenticated %}
+        <a href="{% url 'ventas:eliminar' venta.pk %}"
+           class="btn-erp-danger ms-auto">Eliminar venta</a>
+    {% endif %}
+</div>
+
+<div class="erp-card">
+    <div class="erp-card-header">Encabezado</div>
+    <dl class="row" style="margin:0;">
+        <dt class="col-sm-3">Cliente</dt>
+        <dd class="col-sm-9">
+            <a href="{% url 'clientes:detalle' venta.cliente.pk %}"
+               style="color:var(--clr-royal);">{{ venta.cliente }}</a>
+        </dd>
+        <dt class="col-sm-3">Fecha</dt>
+        <dd class="col-sm-9">{{ venta.fecha|date:"d/m/Y H:i" }}</dd>
+    </dl>
+</div>
+
+<div class="erp-card">
+    <div class="erp-card-header">Líneas de detalle</div>
+    <table class="erp-table">
+        <thead>
+            <tr>
+                <th>Producto</th><th>Precio unit.</th>
+                <th>Cantidad</th><th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in venta.detalles.all %}
+            <tr>
+                <td>
+                    <a href="{% url 'productos:detalle' d.producto.pk %}"
+                       style="color:var(--clr-royal);">
+                        {{ d.producto.nombre }}
+                    </a>
+                </td>
+                <td>${{ d.precio_unitario }}</td>
+                <td>{{ d.cantidad }}</td>
+                <td style="font-weight:600;">${{ d.subtotal }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align:center;
+                    color:var(--clr-muted);">Sin líneas de detalle.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" style="text-align:right;
+                    padding:.65rem 1rem;font-weight:600;">
+                    Total:
+                </td>
+                <td style="padding:.65rem 1rem;font-weight:700;
+                    color:var(--clr-gold);">
+                    ${{ venta.total }}
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<a href="{% url 'ventas:lista' %}" class="btn-erp-primary">← Volver</a>
+{% endblock %}
