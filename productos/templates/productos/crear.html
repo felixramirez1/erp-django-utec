@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Nuevo producto{% endblock %}
+{% block nav_productos %}active{% endblock %}
+
+{% block content %}
+<div class="erp-page-title">
+    <h2>📦 Nuevo producto</h2>
+</div>
+
+<div class="erp-card" style="max-width:640px;">
+    <div class="erp-card-header">Datos del producto</div>
+    <form method="post" style="margin-top:.5rem;">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-4">
+            <label class="erp-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                {% for e in field.errors %}
+                    <p style="color:var(--clr-danger);font-size:.82rem;
+                              margin:.25rem 0 0;">{{ e }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn-erp-gold">Guardar</button>
+            <a href="{% url 'productos:lista' %}"
+               class="btn-erp-primary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

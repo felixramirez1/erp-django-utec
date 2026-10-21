@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Eliminar — {{ proveedor.nombre }}{% endblock %}
+{% block nav_proveedores %}active{% endblock %}
+
+{% block content %}
+<div class="erp-page-title"><h2>🗑️ Eliminar proveedor</h2></div>
+<div class="erp-card" style="max-width:540px;">
+    <div class="erp-alert-danger" style="margin-bottom:1.5rem;">
+        <strong>¿Eliminar a "{{ proveedor.nombre }}"?</strong>
+        <p style="margin:.5rem 0 0;">
+            Los productos asociados quedarán sin proveedor (SET_NULL).
+        </p>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn-erp-danger">Sí, eliminar</button>
+            <a href="{% url 'proveedores:detalle' proveedor.pk %}"
+               class="btn-erp-primary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

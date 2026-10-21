@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Eliminar — {{ cliente.nombre }}{% endblock %}
+{% block nav_clientes %}active{% endblock %}
+
+{% block content %}
+<div class="erp-page-title"><h2>🗑️ Eliminar cliente</h2></div>
+<div class="erp-card" style="max-width:540px;">
+    <div class="erp-alert-danger" style="margin-bottom:1.5rem;">
+        <strong>¿Eliminar a "{{ cliente.nombre }}"?</strong>
+        <p style="margin:.5rem 0 0;">
+            Si el cliente tiene ventas, no podrá eliminarse (PROTECT).
+            Considerar usar "Activo = False" para desactivarlo.
+        </p>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn-erp-danger">Sí, eliminar</button>
+            <a href="{% url 'clientes:detalle' cliente.pk %}"
+               class="btn-erp-primary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

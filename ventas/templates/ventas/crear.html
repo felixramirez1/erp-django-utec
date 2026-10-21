@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Nueva venta{% endblock %}
+{% block nav_ventas %}active{% endblock %}
+
+{% block content %}
+<div class="erp-page-title"><h2>💰 Nueva venta</h2></div>
+
+<form method="post">
+    {% csrf_token %}
+
+    <!-- Encabezado: cliente -->
+    <div class="erp-card" style="max-width:640px;margin-bottom:1rem;">
+        <div class="erp-card-header">Cliente</div>
+        {% for field in venta_form %}
+        <div class="mb-4" style="margin-top:.5rem;">
+            <label class="erp-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                {% for e in field.errors %}
+                    <p style="color:var(--clr-danger);font-size:.82rem;
+                              margin:.25rem 0 0;">{{ e }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Línea de detalle: producto + cantidad + precio -->
+    <div class="erp-card" style="max-width:640px;margin-bottom:1rem;">
+        <div class="erp-card-header" style="background:var(--clr-royal);">
+            Línea de producto
+        </div>
+        {% for field in detalle_form %}
+        <div class="mb-4" style="margin-top:.5rem;">
+            <label class="erp-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                {% for e in field.errors %}
+                    <p style="color:var(--clr-danger);font-size:.82rem;
+                              margin:.25rem 0 0;">{{ e }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn-erp-gold">Registrar venta</button>
+        <a href="{% url 'ventas:lista' %}" class="btn-erp-primary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

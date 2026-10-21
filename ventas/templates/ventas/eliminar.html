@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Eliminar venta #{{ venta.pk }}{% endblock %}
+{% block nav_ventas %}active{% endblock %}
+
+{% block content %}
+<div class="erp-page-title"><h2>🗑️ Eliminar venta</h2></div>
+<div class="erp-card" style="max-width:540px;">
+    <div class="erp-alert-danger" style="margin-bottom:1.5rem;">
+        <strong>¿Eliminar la venta #{{ venta.pk }}?</strong>
+        <p style="margin:.5rem 0 0;">
+            Cliente: {{ venta.cliente }} ·
+            Total: ${{ venta.total }}
+        </p>
+        <p style="margin:.25rem 0 0;font-size:.88rem;">
+            También se eliminarán todas las líneas de detalle (CASCADE).
+        </p>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn-erp-danger">Sí, eliminar</button>
+            <a href="{% url 'ventas:detalle' venta.pk %}"
+               class="btn-erp-primary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
