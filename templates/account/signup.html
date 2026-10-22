@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Crear cuenta{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:center;
+            align-items:center;min-height:60vh;">
+    <div class="erp-card" style="width:100%;max-width:440px;">
+        <div class="erp-card-header" style="text-align:center;">
+            ✨ Crear cuenta de acceso
+        </div>
+
+        <form method="post" action="{% url 'account_signup' %}"
+              style="margin-top:.5rem;">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="mb-4">
+                <label class="erp-label">{{ field.label }}</label>
+                {% if field.field.widget.input_type == 'checkbox' %}
+                    {{ field }}
+                {% else %}
+                    <input type="{{ field.field.widget.input_type }}"
+                           name="{{ field.html_name }}"
+                           class="erp-input"
+                           placeholder="{{ field.label }}"
+                           {% if field.field.required %}required{% endif %}>
+                {% endif %}
+                {% for e in field.errors %}
+                    <p style="color:var(--clr-danger);font-size:.82rem;
+                              margin:.25rem 0 0;">{{ e }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn-erp-gold"
+                    style="width:100%;padding:.6rem;font-size:1rem;">
+                Crear cuenta
+            </button>
+        </form>
+
+        <p style="text-align:center;margin-top:1rem;
+                  color:var(--clr-muted);font-size:.88rem;">
+            ¿Ya tienes cuenta?
+            <a href="{% url 'account_login' %}"
+               style="color:var(--clr-sky);">Inicia sesión</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,19 +1,28 @@
 # clientes/views.py
-"""Vistas de la app clientes — W07.
+"""Vistas de la app clientes — W08.
 
+Inicio: index (W02).
 Lectura: ListView y DetailView.
-Escritura (Create/Update/Delete): W08.
+Escritura: Create/Update/Delete.
 """
+# Agregar PermissionRequiredMixin al import:
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView, DeleteView, DetailView, ListView, UpdateView
 )
-from .forms import ClienteForm
-from django.views.generic import DetailView, ListView
 
+from .forms import ClienteForm
 from .models import Cliente
+
+
+def index(request):
+    """Página de inicio de la app clientes (W02)."""
+    return render(request, 'clientes/index.html')
 
 
 class ClienteListView(ListView):
@@ -44,6 +53,8 @@ class ClienteDetailView(DetailView):
             .order_by('-fecha')[:10]   # últimas 10 ventas
         )
         return ctx
+
+
 class ClienteCreateView(LoginRequiredMixin, CreateView):
     """Formulario para crear un nuevo cliente."""
 
@@ -79,13 +90,14 @@ class ClienteUpdateView(LoginRequiredMixin, UpdateView):
         return response
 
 
-class ClienteDeleteView(LoginRequiredMixin, DeleteView):
-    """Confirmación y borrado de un cliente."""
-
-    model         = Cliente
-    template_name = 'clientes/eliminar.html'
-    pk_url_kwarg  = 'cliente_id'
-    success_url   = reverse_lazy('clientes:lista')
+# Actualizar ClienteDeleteView:
+class ClienteDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model               = Cliente
+    template_name       = 'clientes/eliminar.html'
+    pk_url_kwarg        = 'cliente_id'
+    success_url         = reverse_lazy('clientes:lista')
+    permission_required = 'clientes.delete_cliente'
+    raise_exception     = True
 
     def form_valid(self, form):
         nombre   = self.object.nombre

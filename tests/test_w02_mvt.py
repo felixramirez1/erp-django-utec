@@ -4,8 +4,12 @@ Ejecutar con:
     python manage.py test tests.test_w02_mvt --verbosity=2
 
 Resultado esperado:
-    Ran 12 tests in X.XXXs
+    Ran 13 tests in X.XXXs
     OK
+
+Nota W07: en productos, proveedores y ventas la ruta raíz ahora es la lista
+real (ListView), por eso sus tests verifican lista.html. Clientes conserva
+además su página de inicio (clientes/index.html).
 """
 from django.test import TestCase
 from django.urls import reverse
@@ -26,10 +30,10 @@ class TemplatesRenderTest(TestCase):
         self.assertTemplateUsed(response, 'base.html')
 
     def test_productos_usa_template_correcto(self):
-        """La vista de productos debe usar productos/index.html."""
-        response = self.client.get(reverse('productos:inicio'))
+        """La vista de productos debe usar productos/lista.html."""
+        response = self.client.get(reverse('productos:lista'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'productos/index.html')
+        self.assertTemplateUsed(response, 'productos/lista.html')
 
     def test_clientes_usa_template_correcto(self):
         """La vista de clientes debe usar clientes/index.html."""
@@ -38,16 +42,16 @@ class TemplatesRenderTest(TestCase):
         self.assertTemplateUsed(response, 'clientes/index.html')
 
     def test_proveedores_usa_template_correcto(self):
-        """La vista de proveedores debe usar proveedores/index.html."""
-        response = self.client.get(reverse('proveedores:inicio'))
+        """La vista de proveedores debe usar proveedores/lista.html."""
+        response = self.client.get(reverse('proveedores:lista'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'proveedores/index.html')
+        self.assertTemplateUsed(response, 'proveedores/lista.html')
 
     def test_ventas_usa_template_correcto(self):
-        """La vista de ventas debe usar ventas/index.html."""
-        response = self.client.get(reverse('ventas:inicio'))
+        """La vista de ventas debe usar ventas/lista.html."""
+        response = self.client.get(reverse('ventas:lista'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'ventas/index.html')
+        self.assertTemplateUsed(response, 'ventas/lista.html')
 
     def test_reportes_usa_template_correcto(self):
         """La vista de reportes debe usar reportes/index.html."""

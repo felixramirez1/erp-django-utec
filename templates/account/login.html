@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load allauth %}
+{% block title %}Iniciar sesión{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:center;
+            align-items:center;min-height:60vh;">
+    <div class="erp-card" style="width:100%;max-width:420px;">
+        <div class="erp-card-header" style="text-align:center;">
+            🔐 Iniciar sesión · ERP Django
+        </div>
+
+        <form method="post" action="{% url 'account_login' %}"
+              style="margin-top:.5rem;">
+            {% csrf_token %}
+
+            <!-- Username -->
+            <div class="mb-4">
+                <label class="erp-label">Usuario</label>
+                <input type="text" name="login"
+                       class="erp-input"
+                       placeholder="Tu nombre de usuario"
+                       autofocus required>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+                <label class="erp-label">Contraseña</label>
+                <input type="password" name="password"
+                       class="erp-input"
+                       placeholder="••••••••" required>
+            </div>
+
+            <!-- Errores del formulario -->
+            {% if form.errors %}
+            <div class="erp-alert-danger" style="margin-bottom:1rem;">
+                Usuario o contraseña incorrectos.
+            </div>
+            {% endif %}
+
+            <!-- Botón -->
+            <button type="submit" class="btn-erp-gold"
+                    style="width:100%;padding:.6rem;font-size:1rem;">
+                Entrar
+            </button>
+        </form>
+
+        <p style="text-align:center;margin-top:1rem;
+                  color:var(--clr-muted);font-size:.88rem;">
+            ¿No tienes cuenta?
+            <a href="{% url 'account_signup' %}"
+               style="color:var(--clr-sky);">Regístrate aquí</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

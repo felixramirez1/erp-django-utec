@@ -20,7 +20,7 @@ import os
 import dj_database_url
 
 # ── SEGURIDAD BÁSICA ───────────────────────────────────────────────────────
-DEBUG      = False
+DEBUG = False
 SECRET_KEY = os.environ['SECRET_KEY']   # falla intencionalmente si no existe
 
 # ── HOSTS PERMITIDOS ────────────────────────────────────────────────────────
