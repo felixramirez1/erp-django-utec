@@ -1,34 +1,243 @@
 {% extends "base.html" %}
 {% block title %}Inicio{% endblock %}
 
-{% block content %}
-<div class="text-center py-4">
-    <h1 style="font-family:'Playfair Display',serif;
-               color:var(--clr-navy);font-size:2.2rem;">
-        📦 ERP Django
-    </h1>
-    <p style="color:var(--clr-muted);font-size:1.05rem;">
-        Sistema de gestión empresarial · UTEC Celaya · Espiral 1 W02
-    </p>
-    <div class="d-flex justify-content-center gap-2 mt-2 flex-wrap">
-        <span class="badge-erp-gold">Django 4.2 LTS</span>
-        <span class="badge-erp-gold">Python 3.11</span>
-        <span class="badge-erp-gold">Fable 5 AzulERP</span>
-    </div>
-</div>
+{% block extra_css %}
+<style>
+    .hero-title { 
+        font-size: 2.3rem; 
+        color: var(--clr-gold); 
+        margin: 0; 
+        text-shadow: 0 0 14px rgba(255,117,24,0.35);
+    }
 
-<div class="row g-3 mt-2">
-    {% for m in modulos %}
-    <div class="col-md-4">
-        <div class="erp-card text-center"
-             style="cursor:pointer;" onclick="window.location='{{ m.url }}'">
-            <div style="font-size:2rem;margin-bottom:.4rem;">{{ m.icono }}</div>
-            <strong style="color:var(--clr-navy);">{{ m.nombre }}</strong>
-            <p style="color:var(--clr-muted);font-size:.85rem;margin:.3rem 0 0;">
-                {{ m.descripcion }}
-            </p>
+    /* 🎃 Contenedor y Eslogan Animado en Bucle */
+    .slogan-container {
+        height: 28px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 0.3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .slogan-text {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--clr-sky);
+        overflow: hidden;
+        white-space: nowrap;
+        border-right: 2px solid var(--clr-gold);
+        display: inline-block;
+        /* Duración total ajustada a 9.5s para acomodar el tipeo más lento */
+        animation: 
+            eslogan-ciclo 9.5s infinite,
+            eslogan-parpadeo 0.75s step-end infinite;
+    }
+
+    /* Ciclo: escribe más lento (0-35%) -> lee (35-70%) -> desvanece (70-80%) -> pausa (80-100%) */
+    @keyframes eslogan-ciclo {
+        0% { width: 0; opacity: 1; }
+        35% { width: 33ch; opacity: 1; }      /* Tipeo más pausado y fluido (~3.3s) */
+        70% { width: 33ch; opacity: 1; }      /* Pausa para lectura (~3.3s) */
+        80% { width: 33ch; opacity: 0; }      /* Desvanecimiento suave (~0.9s) */
+        100% { width: 0; opacity: 0; }        /* Pausa oculta antes de reiniciar (~1.9s) */
+    }
+
+    /* Parpadeo del cursor | */
+    @keyframes eslogan-parpadeo {
+        from, to { border-color: transparent; }
+        50% { border-color: var(--clr-gold); }
+    }
+
+    .console-stage { display: flex; justify-content: center; margin: .25rem 0 .5rem; }
+    .console-svg { width: min(400px, 92vw); height: auto; overflow: visible; }
+
+    /* Animaciones SVG */
+    .bob { animation: subir-bajar var(--dur) ease-in-out var(--del) infinite; }
+    .glow { filter: drop-shadow(0 8px 16px rgba(255,117,24,.32)); }
+    .bob-shadow {
+        transform-box: fill-box; transform-origin: center;
+        animation: sombra var(--dur) ease-in-out var(--del) infinite;
+    }
+    .console-led { animation: parpadeo 2.4s ease-in-out infinite; }
+
+    @keyframes subir-bajar { 0%,100% { transform: translateY(0); } 50% { transform: translateY(var(--amp)); } }
+    @keyframes sombra   { 0%,100% { transform: scale(1); opacity: .32; } 50% { transform: scale(.8); opacity: .16; } }
+    @keyframes parpadeo { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+    
+    @media (prefers-reduced-motion: reduce) {
+        .bob { --amp: -3px !important; }
+        .console-led { animation: none; }
+    }
+    .card-icon { height: 56px; display: flex; align-items: center; justify-content: center;
+                 font-size: 2rem; margin-bottom: .4rem; }
+
+    /* 🕸️ Telarañas ESTÁTICAS en el documento */
+    .spider-web {
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.38;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0 0 L100 100 M0 0 L0 100 M0 0 L100 0 M0 0 L100 50 M0 0 L50 100' stroke='%23ff7518' stroke-width='1.2' fill='none'/%3E%3Cpath d='M20 0 Q20 20 0 20 M40 0 Q40 40 0 40 M60 0 Q60 60 0 60 M80 0 Q80 80 0 80 M100 0 Q100 100 0 100' stroke='%23ff7518' stroke-width='0.8' fill='none'/%3E%3C/svg%3E");
+    }
+    .web-top-left { top: -1rem; left: -1rem; }
+    .web-top-right { top: -1rem; right: -1rem; transform: scaleX(-1); }
+    .web-bottom-left { bottom: -1rem; left: -1rem; transform: scaleY(-1); }
+    .web-bottom-right { bottom: -1rem; right: -1rem; transform: scale(-1, -1); }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Contenedor relativo para fijar las telarañas al documento -->
+<div class="position-relative">
+
+    <!-- Telarañas estáticas -->
+    <div class="spider-web web-top-left"></div>
+    <div class="spider-web web-top-right"></div>
+    <div class="spider-web web-bottom-left"></div>
+    <div class="spider-web web-bottom-right"></div>
+
+    <div class="text-center py-4">
+        <h1 class="hero-title">🎮 ConShop 🎃</h1>
+
+        <!-- Eslogan animado en bucle con tipeo pausado -->
+        <div class="slogan-container">
+            <span class="slogan-text">Lo mejor para los mejores 👻</span>
+        </div>
+
+        <div class="console-stage">
+            <svg class="console-svg" viewBox="10 0 330 200" role="img"
+                 aria-label="Audífonos, consola vertical y control de videojuegos flotando">
+                <defs>
+                    <radialGradient id="ventGlow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0" stop-color="#FFAD33"/>
+                        <stop offset=".55" stop-color="#FF7518"/>
+                        <stop offset="1" stop-color="#3A1500"/>
+                    </radialGradient>
+                    <linearGradient id="frontFace" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#1B1E26"/>
+                        <stop offset="1" stop-color="#0E1015"/>
+                    </linearGradient>
+                </defs>
+
+                <!-- Sombras en el suelo -->
+                <ellipse class="bob-shadow" style="--dur:4.2s;--del:-1s"   cx="67"  cy="190" rx="34" ry="5" fill="#FF7518" opacity=".32"/>
+                <ellipse class="bob-shadow" style="--dur:5s;--del:0s"      cx="165" cy="190" rx="70" ry="6" fill="#FF7518" opacity=".32"/>
+                <ellipse class="bob-shadow" style="--dur:4.6s;--del:-2s"   cx="272" cy="190" rx="40" ry="5" fill="#FF7518" opacity=".32"/>
+
+                <!-- Audífonos -->
+                <g class="bob" style="--dur:4.2s;--del:-1s;--amp:-7px">
+                    <g transform="translate(27 88)">
+                        <path d="M10 56 C10 -6 70 -6 70 56" fill="none" stroke="#222733" stroke-width="8" stroke-linecap="round"/>
+                        <path d="M10 56 C10 -6 70 -6 70 56" fill="none" stroke="#2A3040" stroke-width="1.5" stroke-linecap="round"/>
+                        <rect x="1"  y="46" width="20" height="38" rx="9" fill="#1B1E26" stroke="#2A3040" stroke-width="1.5"/>
+                        <rect x="59" y="46" width="20" height="38" rx="9" fill="#1B1E26" stroke="#2A3040" stroke-width="1.5"/>
+                        <rect x="16" y="51" width="8" height="28" rx="4" fill="#0A0B0F"/>
+                        <rect x="56" y="51" width="8" height="28" rx="4" fill="#0A0B0F"/>
+                        <rect x="6"  y="57" width="3" height="16" rx="1.5" fill="var(--clr-gold)"/>
+                        <rect x="71" y="57" width="3" height="16" rx="1.5" fill="var(--clr-gold)"/>
+                    </g>
+                </g>
+
+                <!-- Consola -->
+                <g class="bob glow" style="--dur:5s;--del:0s;--amp:-10px">
+                    <polygon points="180,60 220,40 220,150 180,170"
+                             fill="#0A0B0F" stroke="#262B38" stroke-width="1.5" stroke-linejoin="round"/>
+                    <polygon points="110,60 180,60 180,170 110,170"
+                             fill="url(#frontFace)" stroke="#FF7518" stroke-width="1.5" stroke-linejoin="round"/>
+                    <polygon points="110,60 180,60 220,40 150,40"
+                             fill="#222733" stroke="#2A3040" stroke-width="1.5" stroke-linejoin="round"/>
+                    <ellipse cx="165" cy="50" rx="28" ry="6.5" fill="#06090A"/>
+                    <ellipse class="console-led" cx="165" cy="50" rx="22" ry="4.5" fill="url(#ventGlow)"/>
+                    <circle cx="145" cy="82" r="6" fill="#0A0B0F" stroke="#FF7518" stroke-width="1.5"/>
+                    <rect x="124" y="120" width="42" height="5" rx="2.5" fill="#05060A"/>
+                    <rect x="124" y="148" width="14" height="6" rx="2" fill="#05060A" stroke="#2A3040"/>
+                </g>
+
+                <!-- Control -->
+                <g class="bob" style="--dur:4.6s;--del:-2s;--amp:-8px">
+                    <g transform="translate(227 112)">
+                        <rect x="10" y="-1" width="24" height="5" rx="2.5" fill="#222733"/>
+                        <rect x="56" y="-1" width="24" height="5" rx="2.5" fill="#222733"/>
+                        <path d="M20 8 C34 2 56 2 70 8 C84 8 92 22 94 40 C96 54 90 62 82 60 C74 58 70 48 62 44 L28 44 C20 48 16 58 8 60 C0 62 -6 54 -4 40 C-2 22 6 8 20 8 Z"
+                              fill="#1B1E26" stroke="#2A3040" stroke-width="1.5" stroke-linejoin="round"/>
+                        <circle cx="22" cy="21" r="7.5" fill="#0A0B0F" stroke="#3A4256" stroke-width="1.5"/>
+                        <circle cx="22" cy="21" r="3.5" fill="#1B1E26"/>
+                        <circle cx="60" cy="38" r="7.5" fill="#0A0B0F" stroke="#3A4256" stroke-width="1.5"/>
+                        <circle cx="60" cy="38" r="3.5" fill="#1B1E26"/>
+                        <rect x="29" y="37.5" width="10" height="3" rx="1" fill="#3A4256"/>
+                        <rect x="32.5" y="34" width="3" height="10" rx="1" fill="#3A4256"/>
+                        <circle cx="45" cy="14" r="3.5" fill="#0A0B0F" stroke="#FF7518" stroke-width="1.2"/>
+                        <circle cx="36" cy="22" r="1.8" fill="#3A4256"/>
+                        <circle cx="54" cy="22" r="1.8" fill="#3A4256"/>
+                        <circle cx="72" cy="13" r="3.2" fill="#E8C547"/>
+                        <circle cx="65" cy="20" r="3.2" fill="#4A90D9"/>
+                        <circle cx="79" cy="20" r="3.2" fill="#E5484D"/>
+                        <circle cx="72" cy="27" r="3.2" fill="#39FF14"/>
+                    </g>
+                </g>
+            </svg>
+        </div>
+
+        <p style="color:var(--clr-muted);font-size:1.05rem;">
+            Felix Ramirez · Consolas, controles y audífonos
+        </p>
+        <div class="d-flex justify-content-center gap-2 mt-2 flex-wrap">
+            <span class="badge-erp-gold">🎮 Consolas</span>
+            <span class="badge-erp-gold">🕹️ Controles</span>
+            <span class="badge-erp-gold">🎧 Audífonos</span>
         </div>
     </div>
-    {% endfor %}
+
+    <div class="row g-3 mt-2">
+        {% for m in modulos %}
+        <div class="col-md-4">
+            <div class="erp-card text-center"
+                 style="cursor:pointer;" onclick="window.location='{{ m.url }}'">
+                <div class="card-icon">
+                    {% if m.nombre == "Productos" %}
+                    <svg viewBox="10 36 330 140" width="132" role="img" aria-label="Audífonos, consola y control">
+                        <g transform="translate(27 88)">
+                            <path d="M10 56 C10 -6 70 -6 70 56" fill="none" stroke="#3A4256" stroke-width="8" stroke-linecap="round"/>
+                            <rect x="1"  y="46" width="20" height="38" rx="9" fill="#1B1E26" stroke="#3A4256" stroke-width="2"/>
+                            <rect x="59" y="46" width="20" height="38" rx="9" fill="#1B1E26" stroke="#3A4256" stroke-width="2"/>
+                            <rect x="6"  y="57" width="3" height="16" rx="1.5" fill="var(--clr-gold)"/>
+                            <rect x="71" y="57" width="3" height="16" rx="1.5" fill="var(--clr-gold)"/>
+                        </g>
+                        <polygon points="180,60 220,40 220,150 180,170" fill="#0A0B0F" stroke="#3A4256" stroke-width="2" stroke-linejoin="round"/>
+                        <polygon points="110,60 180,60 180,170 110,170" fill="#161A22" stroke="#FF7518" stroke-width="2" stroke-linejoin="round"/>
+                        <polygon points="110,60 180,60 220,40 150,40" fill="#222733" stroke="#3A4256" stroke-width="2" stroke-linejoin="round"/>
+                        <ellipse cx="165" cy="50" rx="28" ry="6.5" fill="#06090A"/>
+                        <ellipse cx="165" cy="50" rx="22" ry="4.5" fill="#FF7518"/>
+                        <g transform="translate(227 112)">
+                            <path d="M20 8 C34 2 56 2 70 8 C84 8 92 22 94 40 C96 54 90 62 82 60 C74 58 70 48 62 44 L28 44 C20 48 16 58 8 60 C0 62 -6 54 -4 40 C-2 22 6 8 20 8 Z" fill="#1B1E26" stroke="#3A4256" stroke-width="2" stroke-linejoin="round"/>
+                            <circle cx="22" cy="21" r="7.5" fill="#0A0B0F" stroke="#4A5470" stroke-width="1.5"/>
+                            <circle cx="60" cy="38" r="7.5" fill="#0A0B0F" stroke="#4A5470" stroke-width="1.5"/>
+                            <circle cx="72" cy="13" r="3.2" fill="#E8C547"/>
+                            <circle cx="65" cy="20" r="3.2" fill="#4A90D9"/>
+                            <circle cx="79" cy="20" r="3.2" fill="#E5484D"/>
+                            <circle cx="72" cy="27" r="3.2" fill="#39FF14"/>
+                        </g>
+                    </svg>
+                    {% elif m.nombre == "Clientes" %}👻
+                    {% elif m.nombre == "Proveedores" %}🧙‍♂️
+                    {% elif m.nombre == "Ventas" %}🍬
+                    {% elif m.nombre == "Reportes" %}📜
+                    {% elif m.nombre == "Admin" %}🔮
+                    {% else %}{{ m.icono }}{% endif %}
+                </div>
+                <strong style="color:var(--clr-text);">{% if m.nombre == "Productos" %}Artículos{% else %}{{ m.nombre }}{% endif %}</strong>
+                <p style="color:var(--clr-muted);font-size:.85rem;margin:.3rem 0 0;">
+                    {{ m.descripcion }}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

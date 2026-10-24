@@ -1,60 +1,60 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0A2342">
-    <title>{% block title %}ERP Django{% endblock %} · UTEC Celaya</title>
+    <meta name="theme-color" content="#0E1329">
+    <title>{% block title %}Inicio{% endblock %} · ConShop</title>
 
     <!-- Google Fonts: Playfair Display + Inter + JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Chakra+Petch:wght@600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
           rel="stylesheet">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
-    <!-- Fable 5 AzulERP — Design System -->
+    <!-- Fable 5 AzulERP — Design System (Halloween Theme) -->
     <style>
         /* TOKENS MODO DÍA */
         :root, [data-theme="light"] {
-            --clr-navy   : #0A2342;
-            --clr-royal  : #1B4F8A;
-            --clr-sky    : #4A90D9;
-            --clr-ice    : #E8F0FB;
-            --clr-gold   : #B8860B;
-            --clr-amber  : #D4A017;
-            --clr-cream  : #FDF8E8;
-            --clr-bg     : #F5F7FA;
+            --clr-navy   : #1C120C;
+            --clr-royal  : #FF7518;
+            --clr-sky    : #E05600;
+            --clr-ice    : #FFF5EE;
+            --clr-gold   : #FF7518;
+            --clr-amber  : #FFA04D;
+            --clr-cream  : #FFEBD6;
+            --clr-bg     : #FBF8F5;
             --clr-surface: #FFFFFF;
-            --clr-text   : #1A1A2E;
-            --clr-muted  : #5A6A7E;
-            --clr-border : #C8D8EC;
-            --clr-danger : #C0392B;
-            --clr-ok     : #1A7A4A;
-            --shadow-sm  : 0 1px 4px rgba(10,35,66,.08);
-            --shadow-md  : 0 4px 16px rgba(10,35,66,.12);
+            --clr-text   : #1C120C;
+            --clr-muted  : #786458;
+            --clr-border : #EBD5C5;
+            --clr-danger : #D6335A;
+            --clr-ok     : #138A62;
+            --shadow-sm  : 0 1px 4px rgba(43,24,16,.08);
+            --shadow-md  : 0 4px 16px rgba(43,24,16,.14);
         }
-        /* TOKENS MODO NOCHE */
+        /* TOKENS MODO NOCHE (Halloween Dark/Naranja) */
         [data-theme="dark"] {
-            --clr-navy   : #1E3A5F;
-            --clr-royal  : #2E5F9E;
-            --clr-sky    : #6BAEE8;
-            --clr-ice    : #1A2A3A;
-            --clr-gold   : #D4AF37;
-            --clr-amber  : #E8C547;
-            --clr-cream  : #2A2510;
-            --clr-bg     : #0D1B2A;
-            --clr-surface: #142033;
-            --clr-text   : #E2EAF4;
-            --clr-muted  : #8AA0B8;
-            --clr-border : #2A3F58;
-            --clr-danger : #E74C3C;
-            --clr-ok     : #2ECC71;
-            --shadow-sm  : 0 1px 4px rgba(0,0,0,.3);
-            --shadow-md  : 0 4px 16px rgba(0,0,0,.4);
+            --clr-navy   : #0B0612;
+            --clr-royal  : #8B31FF;
+            --clr-sky    : #FF944D;
+            --clr-ice    : #170E24;
+            --clr-gold   : #FF7518; /* Naranja Neón Halloween sustituyendo al azul/cian */
+            --clr-amber  : #FFA04D;
+            --clr-cream  : #28143E;
+            --clr-bg     : #08050D;
+            --clr-surface: #120A1C;
+            --clr-text   : #E9ECFA;
+            --clr-muted  : #9E8BB5;
+            --clr-border : #29173E;
+            --clr-danger : #FF5C7A;
+            --clr-ok     : #39FF14; /* Verde neón fantasmagórico */
+            --shadow-sm  : 0 1px 4px rgba(0,0,0,.4);
+            --shadow-md  : 0 6px 22px rgba(255,117,24,.18);
         }
         /* BASE */
         *, *::before, *::after { box-sizing: border-box; }
@@ -137,7 +137,7 @@
             border-bottom: 1px solid var(--clr-border); font-size: .9rem;
         }
         .erp-table tbody tr:nth-child(even) td { background: var(--clr-ice); }
-        .erp-table tbody tr:hover td { background: rgba(74,144,217,.08); }
+        .erp-table tbody tr:hover td { background: rgba(255,117,24,.08); }
         .erp-table tfoot td {
             background: var(--clr-cream); color: var(--clr-gold);
             font-weight: 700; border-top: 2px solid var(--clr-gold);
@@ -180,11 +180,11 @@
         }
         .erp-input:focus {
             outline: none; border-color: var(--clr-sky);
-            box-shadow: 0 0 0 3px rgba(74,144,217,.18);
+            box-shadow: 0 0 0 3px rgba(255,117,24,.18);
         }
         /* BADGES */
         .badge-erp-active {
-            background: rgba(26,122,74,.12); color: var(--clr-ok);
+            background: rgba(57,255,20,.12); color: var(--clr-ok);
             border: 1px solid currentColor;
             font-size: .75rem; padding: .2rem .6rem;
             border-radius: 20px; font-weight: 600;
@@ -212,7 +212,7 @@
             padding: 1rem 1.25rem;
         }
         .erp-alert-success {
-            background: rgba(26,122,74,.08); border: 1px solid rgba(26,122,74,.3);
+            background: rgba(57,255,20,.08); border: 1px solid rgba(57,255,20,.3);
             border-left: 5px solid var(--clr-ok); border-radius: 8px;
             padding: 1rem 1.25rem;
         }
@@ -235,7 +235,7 @@
         }
         [data-theme="dark"] code,
         [data-theme="dark"] .mono {
-            color: var(--clr-sky); background: rgba(74,144,217,.12);
+            color: var(--clr-sky); background: rgba(255,117,24,.12);
         }
         /* FOOTER */
         .erp-footer {
@@ -243,6 +243,26 @@
             text-align: center; font-size: .78rem;
             padding: .75rem; border-top: 2px solid var(--clr-gold);
         }
+
+        /* MIDNIGHT: tipografía, fondo y acentos */
+        h1, h2, h3, .erp-brand, .erp-card-header, [style*="Playfair"] {
+            font-family: 'Chakra Petch','Inter',sans-serif !important;
+        }
+        body {
+            background:
+                radial-gradient(700px 420px at 15% -8%, rgba(255,117,24,.18), transparent 62%),
+                var(--clr-bg);
+            background-attachment: fixed;
+        }
+        .erp-navbar { border-bottom: 2px solid var(--clr-gold); box-shadow: 0 6px 28px rgba(255,117,24,.15); }
+        .erp-brand { text-shadow: 0 0 16px rgba(255,117,24,.45); }
+        .erp-nav-link:hover, .erp-nav-link.active {
+            background: rgba(139,49,255,.30);
+            box-shadow: inset 0 0 0 1px var(--clr-royal);
+        }
+        .erp-card:hover { border-color: var(--clr-gold); }
+        [data-theme="dark"] [style*="--clr-navy"] { color: var(--clr-text) !important; }
+        :focus-visible { outline: 2px solid var(--clr-gold); outline-offset: 2px; }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -251,7 +271,7 @@
 
 <!-- NAVBAR -->
 <nav class="erp-navbar">
-    <a class="erp-brand" href="/">📦 ERP Django <span>· UTEC Celaya</span></a>
+    <a class="erp-brand" href="/">🎮 ConShop <span>· Felix Ramirez</span></a>
     <div class="erp-nav-links">
         <a href="{% url 'productos:lista' %}"
            class="erp-nav-link {% block nav_productos %}{% endblock %}">Productos</a>
@@ -298,7 +318,7 @@
 
 <!-- FOOTER -->
 <footer class="erp-footer">
-    ERP Django · Django 4.2 LTS · Fable 5 AzulERP · UTEC Celaya · Espiral 1
+    © ConShop · Felix Ramirez · 🎮 Consolas · 🕹️ Controles · 🎧 Audífonos
 </footer>
 
 <!-- Bootstrap JS -->
@@ -311,7 +331,7 @@
     var btn  = document.getElementById('themeBtn');
     var html = document.documentElement;
     var icons = { light: '🌙', dark: '☀️' };
-    var saved = localStorage.getItem('erpTheme') || 'light';
+    var saved = localStorage.getItem('erpTheme') || 'dark';
     html.setAttribute('data-theme', saved);
     if (btn) btn.textContent = icons[saved];
     if (btn) {
