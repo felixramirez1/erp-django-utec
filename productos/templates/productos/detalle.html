@@ -13,6 +13,19 @@
     {% endif %}
 </div>
 
+<!-- Imagen del producto — W11 -->
+{% if producto.imagen %}
+<div class="erp-card" style="max-width:480px;margin-bottom:1rem;">
+    <div class="erp-card-header">Imagen del producto</div>
+    <div style="text-align:center;padding:.5rem;">
+        <img src="{{ producto.imagen.url }}"
+             alt="{{ producto.nombre }}"
+             style="max-width:100%;max-height:320px;
+                    border-radius:8px;object-fit:contain;">
+    </div>
+</div>
+{% endif %}
+
 <div class="erp-card">
     <div class="erp-card-header">Información del producto</div>
     <dl class="row" style="margin:0;">

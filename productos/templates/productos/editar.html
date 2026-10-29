@@ -9,7 +9,7 @@
 
 <div class="erp-card" style="max-width:640px;">
     <div class="erp-card-header">Modificar datos</div>
-    <form method="post" style="margin-top:.5rem;">
+    <form method="post" enctype="multipart/form-data" style="margin-top:.5rem;">
         {% csrf_token %}
         {% for field in form %}
         <div class="mb-4">
