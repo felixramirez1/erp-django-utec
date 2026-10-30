@@ -1,31 +1,20 @@
 # ventas/views.py
-"""Vistas de la app ventas — W07.
+import io
+from datetime import date
 
-Lectura: VentaListView y VentaDetailView.
-Escritura (crear_venta): W08.
-"""
-# ventas/views.py — actualizar imports al inicio:
-from django.contrib.auth.decorators import (
-    login_required,
-    permission_required,
-)
-
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-
-# ventas/views.py — agregar imports al inicio:
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, DetailView, ListView
 
-from .forms  import DetalleVentaForm, VentaForm
+from configuracion.models import ConfiguracionERP
+from .forms import DetalleVentaForm, VentaForm
 from .models import DetalleVenta, Venta
-
-from django.views.generic import DetailView, ListView
-
-from .models import Venta
 
 
 class VentaListView(ListView):
@@ -60,21 +49,12 @@ class VentaDetailView(DetailView):
             .select_related('cliente')
             .prefetch_related('detalles__producto')
         )
-    
-# Eliminar la función crear_venta de W08 y reemplazar por:
+
 
 @login_required
 @permission_required('ventas.add_venta', raise_exception=True)
 def crear_venta(request):
-    """Crea un encabezado de venta con una línea de detalle.
-
-    Decoradores (se aplican de abajo hacia arriba):
-        @login_required            → verifica autenticación
-        @permission_required(...)  → verifica permiso add_venta
-
-    GET  → muestra los dos formularios vacíos.
-    POST → valida ambos, guarda si correctos, muestra errores si no.
-    """
+    """Crea un encabezado de venta con una línea de detalle."""
     venta_form   = VentaForm(request.POST or None)
     detalle_form = DetalleVentaForm(request.POST or None)
 
@@ -86,8 +66,7 @@ def crear_venta(request):
             detalle.save()
             messages.success(
                 request,
-                f'Venta #{venta.pk} registrada. '
-                f'Total: ${venta.total:.2f}'
+                f'Venta #{venta.pk} registrada. Total: ${venta.total:.2f}'
             )
             return redirect('ventas:detalle', venta_id=venta.pk)
 
@@ -95,6 +74,7 @@ def crear_venta(request):
         'venta_form':   venta_form,
         'detalle_form': detalle_form,
     })
+
 
 class VentaDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model               = Venta
@@ -109,3 +89,76 @@ class VentaDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
         response = super().form_valid(form)
         messages.success(self.request, f'Venta #{pk} eliminada.')
         return response
+
+
+# ventas/views.py — reemplazar la función venta_pdf completa:
+
+@login_required
+def venta_pdf(request, venta_id: int) -> HttpResponse:
+    """Genera y descarga la factura de una venta en formato PDF.
+
+    Motor: WeasyPrint (requiere Docker o Linux con libpango/cairo/gdk-pixbuf).
+    Alternativa de entorno sin Docker: ver Guía W12 original con xhtml2pdf.
+
+    Args:
+        request:  HttpRequest de Django.
+        venta_id: ID de la venta a generar.
+
+    Returns:
+        HttpResponse con Content-Type application/pdf y descarga directa.
+
+    Raises:
+        Http404: si la venta no existe.
+    """
+    try:
+        import weasyprint   # import local: solo disponible en Docker/Linux
+    except (ImportError, OSError):
+        # WeasyPrint no está instalado o faltan librerías del sistema
+        # (pasa en Windows sin Docker). Avisar en vez de mostrar el error.
+        from django.contrib import messages
+        from django.shortcuts import redirect
+        messages.error(
+            request,
+            'El PDF solo se puede generar en Docker/Render '
+            '(WeasyPrint no está disponible en este equipo).'
+        )
+        return redirect('ventas:lista')
+
+    from datetime import date
+    from django.template.loader import render_to_string
+    from configuracion.models  import ConfiguracionERP
+
+    venta = get_object_or_404(
+        Venta.objects
+        .select_related('cliente')
+        .prefetch_related('detalles__producto__categoria'),
+        pk=venta_id
+    )
+
+    config  = ConfiguracionERP.get_instance()
+    context = {
+        'venta':  venta,
+        'config': config,
+        'hoy':    date.today(),
+    }
+
+    html_string = render_to_string(
+        'ventas/factura_pdf.html',
+        context,
+        request=request   # necesario para template tags que usen request
+    )
+
+    # ── WeasyPrint: conversión HTML → PDF ─────────────────────────────
+    # base_url: permite que WeasyPrint encuentre imágenes relativas
+    # como /media/productos/logo.jpg o /static/css/factura.css.
+    # Sin base_url, las imágenes aparecen en blanco en el PDF.
+    pdf_bytes = weasyprint.HTML(
+        string   = html_string,
+        base_url = request.build_absolute_uri('/'),
+    ).write_pdf()
+
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
+    response['Content-Disposition'] = (
+        f'attachment; filename="factura_{venta.pk:05d}.pdf"'
+    )
+    return response
