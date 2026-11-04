@@ -1,34 +1,70 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Factura #{{ venta.pk }}</title>
+    <meta charset="utf-8">
+    <title>Factura Venta #{{ venta.pk }}</title>
     <style>
-        @page { size: A4; margin: 2cm; }
-        body { font-family: Arial, sans-serif; font-size: 10pt; color: #1A1A2E; }
-        .header { background: #0A2342; color: #D4AF37; padding: 15px; margin-bottom: 20px; }
-        .header h1 { margin: 0; font-size: 18pt; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { background: #0A2342; color: #FFFFFF; padding: 8px; text-align: left; }
-        td { padding: 8px; border-bottom: 1px solid #E8F0FB; }
-        .total { text-align: right; font-weight: bold; margin-top: 15px; font-size: 12pt; }
+        @page {
+            size: letter;
+            margin: 1.5cm;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #333;
+            font-size: 12px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #0d233a;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            color: #0d233a;
+            margin: 0;
+        }
+        .info-table, .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .details-table th, .details-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .details-table th {
+            background-color: #0d233a;
+            color: #ffffff;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #f8f9fa;
+        }
     </style>
 </head>
-
 <body>
     <div class="header">
-        <h1>FACTURA #{{ venta.pk|stringformat:"05d" }}</h1>
-        <p style="color:#FFFFFF;">{{ config.nombre_empresa }}</p>
+        <h1>{{ config.nombre_empresa|default:"ERP Django" }}</h1>
+        <p>Factura de Venta #{{ venta.pk }} | Fecha: {{ venta.fecha|date:"d/m/Y H:i" }}</p>
     </div>
-    <p><strong>Cliente:</strong> {{ venta.cliente.nombre }}</p>
-    <p><strong>Fecha:</strong> {{ venta.fecha|date:"d/m/Y H:i" }}</p>
 
-    <table>
+    <table class="info-table">
+        <tr>
+            <td><strong>Cliente:</strong> {{ venta.cliente.nombre }} {{ venta.cliente.apellido }}</td>
+            <td class="text-right"><strong>RFC:</strong> {{ venta.cliente.rfc|default:"N/A" }}</td>
+        </tr>
+    </table>
+
+    <table class="details-table">
         <thead>
             <tr>
                 <th>Producto</th>
-                <th>Cant.</th>
                 <th>Precio Unit.</th>
+                <th>Cantidad</th>
                 <th>Subtotal</th>
             </tr>
         </thead>
@@ -36,16 +72,22 @@
             {% for d in venta.detalles.all %}
             <tr>
                 <td>{{ d.producto.nombre }}</td>
-                <td>{{ d.cantidad }}</td>
                 <td>${{ d.precio_unitario }}</td>
+                <td>{{ d.cantidad }}</td>
                 <td>${{ d.subtotal }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align:center;">Sin líneas de detalle.</td>
             </tr>
             {% endfor %}
         </tbody>
+        <tfoot>
+            <tr class="total-row">
+                <td colspan="3" class="text-right">Total:</td>
+                <td>${{ venta.total }}</td>
+            </tr>
+        </tfoot>
     </table>
-
-    <div class="total">
-        <p>TOTAL: ${{ venta.total }}</p>
-    </div>
 </body>
 </html>

@@ -5,10 +5,18 @@
 {% block content %}
 <div class="erp-page-title">
     <h2>💰 Venta #{{ venta.pk }}</h2>
-    {% if user.is_authenticated %}
-        <a href="{% url 'ventas:eliminar' venta.pk %}"
-           class="btn-erp-danger ms-auto">Eliminar venta</a>
-    {% endif %}
+
+    <div class="d-flex gap-2 ms-auto">
+        <!-- 📄 BOTÓN PDF W12 -->
+        <a href="{% url 'ventas:pdf' venta.pk %}" class="btn-erp-gold" target="_blank">
+            📄 Descargar PDF
+        </a>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'ventas:eliminar' venta.pk %}"
+               class="btn-erp-danger">Eliminar venta</a>
+        {% endif %}
+    </div>
 </div>
 
 <div class="erp-card">
