@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% load django_filters %}
+{% block title %}Catálogo de Productos{% endblock %}
+
+{% block content %}
+<div class="erp-page-title">
+    <h2>🛒 Catálogo</h2>
+    <span style="margin-left:auto;color:var(--clr-muted);font-size:.85rem;">
+        {{ page_obj.paginator.count }} producto(s) disponibles
+    </span>
+    <a href="{% url 'catalogo:carrito' %}"
+       class="btn-erp-gold"
+       style="position:relative;">
+        🛍️ Carrito
+        {% if carrito_total_items > 0 %}
+        <span style="position:absolute;top:-8px;right:-8px;
+                     background:var(--clr-danger);color:#FFF;
+                     border-radius:50%;width:20px;height:20px;
+                     font-size:.7rem;display:flex;align-items:center;
+                     justify-content:center;font-weight:700;">
+            {{ carrito_total_items }}
+        </span>
+        {% endif %}
+    </a>
+</div>
+
+<!-- Filtros -->
+<div class="erp-card" style="margin-bottom:1.5rem;">
+    <div class="erp-card-header">🔍 Filtrar productos</div>
+    <form method="get" style="margin-top:.5rem;">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="erp-label">Buscar por nombre</label>
+                {{ filtro.form.nombre }}
+            </div>
+            <div class="col-md-3">
+                <label class="erp-label">Categoría</label>
+                {{ filtro.form.categoria }}
+            </div>
+            <div class="col-md-2">
+                <label class="erp-label">Precio mín. ($)</label>
+                {{ filtro.form.precio_min }}
+            </div>
+            <div class="col-md-2">
+                <label class="erp-label">Precio máx. ($)</label>
+                {{ filtro.form.precio_max }}
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn-erp-primary w-100">
+                    Filtrar
+                </button>
+            </div>
+        </div>
+        {% if request.GET %}
+        <div style="margin-top:.75rem;">
+            <a href="{% url 'catalogo:catalogo' %}"
+               style="color:var(--clr-muted);font-size:.85rem;">
+                ✕ Limpiar filtros
+            </a>
+        </div>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Tarjetas de productos -->
+{% if productos %}
+<div class="row g-3">
+    {% for prod in productos %}
+    <div class="col-md-3 col-sm-6">
+        <div class="erp-card"
+             style="height:100%;display:flex;flex-direction:column;">
+
+            <!-- Imagen del producto -->
+            {% if prod.imagen %}
+            <img src="{{ prod.imagen.url }}"
+                 alt="{{ prod.nombre }}"
+                 style="width:100%;height:160px;object-fit:cover;
+                        border-radius:8px 8px 0 0;margin:-1.5rem -1.5rem 1rem;">
+            {% else %}
+            <div style="width:calc(100% + 3rem);height:120px;
+                        margin:-1.5rem -1.5rem 1rem;
+                        background:var(--clr-ice);
+                        border-radius:8px 8px 0 0;
+                        display:flex;align-items:center;
+                        justify-content:center;
+                        color:var(--clr-muted);font-size:2.5rem;">
+                📦
+            </div>
+            {% endif %}
+
+            <!-- Nombre y categoría -->
+            <div style="flex:1;">
+                <p style="font-weight:600;color:var(--clr-navy);
+                          margin:0 0 .25rem;font-size:.95rem;">
+                    {{ prod.nombre }}
+                </p>
+                <p style="font-size:.8rem;color:var(--clr-muted);margin:0;">
+                    {{ prod.categoria }}
+                </p>
+            </div>
+
+            <!-- Precio y stock -->
+            <div style="margin-top:.75rem;padding-top:.75rem;
+                        border-top:1px solid var(--clr-border);">
+                <p style="font-size:1.2rem;font-weight:700;
+                          color:var(--clr-gold);margin:0;">
+                    ${{ prod.precio }}
+                </p>
+                {% if prod.stock < 5 %}
+                <span class="badge-erp-inactive" style="font-size:.72rem;">
+                    Pocas unidades: {{ prod.stock }}
+                </span>
+                {% else %}
+                <span class="badge-erp-active" style="font-size:.72rem;">
+                    En stock: {{ prod.stock }}
+                </span>
+                {% endif %}
+            </div>
+
+            <!-- Botón agregar al carrito -->
+            <form method="post"
+                  action="{% url 'catalogo:agregar' prod.pk %}"
+                  style="margin-top:.75rem;">
+                {% csrf_token %}
+                <input type="hidden" name="cantidad" value="1">
+                <input type="hidden" name="next"
+                       value="{{ request.get_full_path }}">
+                <button type="submit"
+                        class="btn-erp-primary"
+                        style="width:100%;">
+                    + Agregar al carrito
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Paginación -->
+{% if is_paginated %}
+<div style="display:flex;gap:.5rem;justify-content:center;margin-top:2rem;">
+    {% if page_obj.has_previous %}
+        <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}"
+           class="btn-erp-primary btn-erp-sm">← Anterior</a>
+    {% endif %}
+    <span style="padding:.35rem .75rem;color:var(--clr-muted);font-size:.88rem;">
+        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+    </span>
+    {% if page_obj.has_next %}
+        <a href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}"
+           class="btn-erp-primary btn-erp-sm">Siguiente →</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="erp-alert-info" style="margin-top:1.5rem;">
+    No se encontraron productos con los filtros seleccionados.
+    <a href="{% url 'catalogo:catalogo' %}" style="color:var(--clr-sky);">
+        Ver todos los productos
+    </a>
+</div>
+{% endif %}
+{% endblock %}
