@@ -10,6 +10,10 @@ urlpatterns = [
     path('',
          views.ProductoListView.as_view(),
          name='lista'),
+    # Exportación a Excel (W12)
+    path('exportar/excel/',
+         views.exportar_excel,
+         name='exportar_excel'),
     path('<int:producto_id>/',
          views.ProductoDetailView.as_view(),
          name='detalle'),

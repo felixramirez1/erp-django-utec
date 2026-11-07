@@ -3,20 +3,20 @@
 
 ListView y DetailView con select_related y paginación.
 Escritura (Create/Update/Delete) se implementa en W08.
+Exportación a CSV (compatible con Excel) agregada en W12.
 """
-# productos/views.py — actualizar el import al inicio:
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+import csv
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView, DeleteView, DetailView, ListView, UpdateView
 )
 
 from .forms import ProductoForm
-from django.views.generic import DetailView, ListView
-
 from .models import Producto
 
 
@@ -66,6 +66,7 @@ class ProductoDetailView(DetailView):
         """Pre-carga FKs para evitar queries adicionales en el template."""
         return Producto.objects.select_related('categoria', 'proveedor')
 
+
 class ProductoCreateView(LoginRequiredMixin, CreateView):
     """Formulario para crear un nuevo producto.
 
@@ -105,6 +106,7 @@ class ProductoUpdateView(LoginRequiredMixin, UpdateView):
         )
         return response
 
+
 class ProductoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model               = Producto
     template_name       = 'productos/eliminar.html'
@@ -112,3 +114,35 @@ class ProductoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView
     success_url         = reverse_lazy('productos:lista')
     permission_required = 'productos.delete_producto'
     # (sin raise_exception)
+
+
+@login_required
+def exportar_excel(request):
+    """Exporta los productos a CSV (se abre directamente en Excel).
+
+    No requiere librerías externas: usa el módulo csv de Python.
+    """
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = 'attachment; filename="productos.csv"'
+    response.write('\ufeff')  # BOM: Excel muestra bien los acentos
+
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'Nombre', 'Categoría', 'Proveedor',
+                     'Precio', 'Stock', 'Activo'])
+
+    productos = (
+        Producto.objects
+        .select_related('categoria', 'proveedor')
+        .order_by('nombre')
+    )
+    for p in productos:
+        writer.writerow([
+            p.pk,
+            p.nombre,
+            p.categoria,
+            p.proveedor or '',
+            p.precio,
+            p.stock,
+            'Sí' if p.activo else 'No',
+        ])
+    return response

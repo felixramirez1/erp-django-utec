@@ -19,6 +19,7 @@ api_urlpatterns = (
     ventas_api
 )
 
+# core/urls.py — agregar la ruta del catálogo:
 urlpatterns = [
     path('admin/',      admin.site.urls),
     path('',            views.bienvenida,             name='inicio'),
@@ -26,7 +27,9 @@ urlpatterns = [
     # API REST
     path('api/',        include((api_urlpatterns, 'api'))),
     path('api/auth/token/', obtain_auth_token, name='api_token'),
-    # Apps del ERP (interfaz web)
+    # E-commerce público — W13
+    path('catalogo/',   include('catalogo.urls', namespace='catalogo')),
+    # Apps del ERP (interfaz interna)
     path('clientes/',    include('clientes.urls',    namespace='clientes')),
     path('proveedores/', include('proveedores.urls', namespace='proveedores')),
     path('productos/',   include('productos.urls',   namespace='productos')),

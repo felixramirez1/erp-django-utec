@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="erp-card" style="max-width:480px;margin:0 auto;text-align:center;">
+    <div class="erp-card-header">💳 Proceso de pago</div>
+    <p style="margin:1.5rem 0;color:var(--clr-muted);">
+        El proceso de pago con Stripe se implementará en la
+        <strong>Semana W14</strong>.
+    </p>
+    <div class="d-flex gap-2 justify-content-center">
+        <a href="{% url 'catalogo:carrito' %}" class="btn-erp-primary">
+            ← Volver al carrito
+        </a>
+    </div>
+</div>
+{% endblock %}

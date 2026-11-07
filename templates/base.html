@@ -437,6 +437,21 @@
                class="erp-nav-link {% block nav_ventas %}{% endblock %}">Ventas</a>
             <a href="{% url 'reportes:inicio' %}"
                class="erp-nav-link {% block nav_reportes %}{% endblock %}">Reportes</a>
+
+            <!-- Tienda y carrito -->
+            <a href="{% url 'catalogo:catalogo' %}"
+               class="erp-nav-link {% block nav_catalogo %}{% endblock %}">
+                🛒 Tienda
+            </a>
+            <!-- Contador del carrito en la navbar -->
+            {% if carrito_total_items > 0 %}
+            <a href="{% url 'catalogo:carrito' %}"
+               class="erp-nav-link"
+               style="position:relative;">
+                🛍️ ({{ carrito_total_items }})
+            </a>
+            {% endif %}
+
             <span class="erp-nav-sep" aria-hidden="true"></span>
             <a href="/admin/" class="erp-nav-link">Admin</a>
             {% if user.is_authenticated %}
