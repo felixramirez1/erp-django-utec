@@ -211,9 +211,15 @@ def checkout(request):
     GET:  Muestra resumen del carrito con IVA calculado.
           No crea PaymentIntent (espera a POST).
 
+<<<<<<< HEAD
+    POST: Valida carrito → crea Pedido (con snapshot del carrito) →
+          crea PaymentIntent → retorna client_secret al template para
+          que Stripe.js confirme el pago del lado del cliente.
+=======
     POST: Valida carrito → crea Pedido → crea PaymentIntent →
           retorna client_secret al template para que Stripe.js
           confirme el pago del lado del cliente.
+>>>>>>> dba8f367ce4c962a023a6b2e2acc128e65909f18
 
     Redirige a /catalogo/ si el carrito está vacío.
     """
@@ -230,6 +236,29 @@ def checkout(request):
             # ── 1. Vincular usuario con Cliente del ERP ────────────────
             cliente = obtener_o_crear_cliente(request.user)
 
+<<<<<<< HEAD
+            # ── 2. Crear el Pedido con snapshot del carrito ────────────
+            numero = generar_numero_pedido()
+
+            # Snapshot: lista de dicts serializables a JSON.
+            # 'precio' ya es str en la sesión, así que no hay Decimal.
+            snapshot = [
+                {
+                    'producto_id': int(prod_id),
+                    'nombre':      datos['nombre'],
+                    'cantidad':    int(datos['cantidad']),
+                    'precio':      datos['precio'],
+                }
+                for prod_id, datos in carrito.items()
+            ]
+
+            pedido = Pedido.objects.create(
+                numero_pedido  = numero,
+                cliente        = cliente,
+                estado         = 'pendiente',
+                total_pagado   = totales['total'],
+                items_snapshot = snapshot,
+=======
             # ── 2. Crear el Pedido en estado "pendiente" ───────────────
             numero = generar_numero_pedido()
             pedido = Pedido.objects.create(
@@ -237,6 +266,7 @@ def checkout(request):
                 cliente       = cliente,
                 estado        = 'pendiente',
                 total_pagado  = totales['total'],
+>>>>>>> dba8f367ce4c962a023a6b2e2acc128e65909f18
             )
 
             # ── 3. Crear PaymentIntent en Stripe ───────────────────────

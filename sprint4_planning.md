@@ -59,4 +59,22 @@ actualizando automáticamente el estado del pedido.
 | pago_error: template con causas y reintento | ✅ W14 |
 | Tests con unittest.mock.patch | ✅ W14 |
 | Webhooks + actualizar estado pedido | ⏳ W15 |
+<<<<<<< HEAD
 | Descontar stock al confirmar pago | ⏳ W15 |
+
+## Sprint 4 — Estado final W15
+
+| HU | Estado | Pts |
+|---|---|---|
+| HU-E5-01 a HU-E5-08 | ✅ Completadas | 26/26 |
+
+## Hito M5 — ALCANZADO ✅
+- Catálogo: /catalogo/ → 200 sin auth con filtros
+- Carrito: agregar/remover/actualizar/vaciar funcional
+- Stripe: tarjeta 4242 → pago exitoso → pedido 'pagado'
+- Webhook: payment_intent.succeeded → stock decrementado
+- Tests: Ran 147 tests → OK
+- Fecha: 09/11/2026
+=======
+| Descontar stock al confirmar pago | ⏳ W15 |
+>>>>>>> dba8f367ce4c962a023a6b2e2acc128e65909f18
