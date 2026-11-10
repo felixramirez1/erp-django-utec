@@ -114,4 +114,4 @@ class VentaPDFWeasyPrintTest(TestCase):
         self.client.force_login(self.user)
         r = self.client.get(reverse('productos:exportar_excel'))
         self.assertEqual(r.status_code, 200)
-        self.assertIn('spreadsheetml', r.get('Content-Type', ''))
+        self.assertIn('text/csv', r.get('Content-Type', ''))

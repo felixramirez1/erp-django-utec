@@ -25,6 +25,20 @@ from productos.models import Producto
 
 from .filters import ProductoFilter
 
+# catalogo/views.py — agregar imports al inicio:
+import stripe
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+
+from ventas.models import DetalleVenta, Pedido
+from .checkout_utils import (
+    calcular_totales,
+    generar_numero_pedido,
+    obtener_o_crear_cliente,
+)
+
+# Configurar la clave secreta de Stripe
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 # ── CATÁLOGO ───────────────────────────────────────────────────────────────
 
@@ -187,3 +201,113 @@ def vaciar_carrito(request):
         _guardar_carrito(request, {})
         messages.info(request, 'Carrito vaciado.')
     return redirect('catalogo:carrito')
+
+# catalogo/views.py — agregar al final:
+
+@login_required
+def checkout(request):
+    """Proceso de pago: muestra resumen y crea PaymentIntent de Stripe.
+
+    GET:  Muestra resumen del carrito con IVA calculado.
+          No crea PaymentIntent (espera a POST).
+
+    POST: Valida carrito → crea Pedido → crea PaymentIntent →
+          retorna client_secret al template para que Stripe.js
+          confirme el pago del lado del cliente.
+
+    Redirige a /catalogo/ si el carrito está vacío.
+    """
+    carrito = _obtener_carrito(request)
+    if not carrito:
+        messages.warning(request, 'Tu carrito está vacío.')
+        return redirect('catalogo:catalogo')
+
+    totales         = calcular_totales(carrito)
+    publishable_key = settings.STRIPE_PUBLISHABLE_KEY
+
+    if request.method == 'POST':
+        try:
+            # ── 1. Vincular usuario con Cliente del ERP ────────────────
+            cliente = obtener_o_crear_cliente(request.user)
+
+            # ── 2. Crear el Pedido en estado "pendiente" ───────────────
+            numero = generar_numero_pedido()
+            pedido = Pedido.objects.create(
+                numero_pedido = numero,
+                cliente       = cliente,
+                estado        = 'pendiente',
+                total_pagado  = totales['total'],
+            )
+
+            # ── 3. Crear PaymentIntent en Stripe ───────────────────────
+            # Monto en centavos (Stripe requiere entero)
+            monto_centavos = int(totales['total'] * 100)
+
+            intent = stripe.PaymentIntent.create(
+                amount          = monto_centavos,
+                currency        = 'mxn',
+                metadata        = {
+                    'pedido_id':  pedido.pk,
+                    'pedido_num': pedido.numero_pedido,
+                    'cliente':    cliente.nombre,
+                },
+                idempotency_key = f'pedido-{pedido.pk}',
+            )
+
+            # ── 4. Retornar client_secret al template ──────────────────
+            return render(request, 'catalogo/checkout.html', {
+                'carrito':         carrito,
+                'totales':         totales,
+                'pedido':          pedido,
+                'client_secret':   intent.client_secret,
+                'publishable_key': publishable_key,
+            })
+
+        except stripe.error.StripeError as exc:
+            messages.error(
+                request,
+                f'Error al conectar con Stripe: {exc.user_message}'
+            )
+            return redirect('catalogo:pago_error')
+
+        except Exception as exc:
+            messages.error(
+                request,
+                f'Error inesperado en el proceso de pago: {exc}'
+            )
+            return redirect('catalogo:pago_error')
+
+    # GET — solo mostrar resumen (sin PaymentIntent)
+    return render(request, 'catalogo/checkout.html', {
+        'carrito':         carrito,
+        'totales':         totales,
+        'client_secret':   None,          # se genera en POST
+        'publishable_key': publishable_key,
+    })
+
+
+def pago_exitoso(request, pedido_id: int):
+    """Vista de confirmación post-pago exitoso.
+
+    Vacía el carrito de la sesión y muestra el número de pedido.
+    Stripe redirige aquí después de `stripe.confirmCardPayment` exitoso.
+    """
+    from django.shortcuts import get_object_or_404
+    pedido = get_object_or_404(Pedido, pk=pedido_id)
+
+    # Vaciar el carrito al confirmar el pago
+    _guardar_carrito(request, {})
+    messages.success(
+        request,
+        f'¡Pago exitoso! Tu pedido {pedido.numero_pedido} '
+        f'está confirmado. Total: ${pedido.total_pagado}'
+    )
+
+    return render(request, 'catalogo/pago_exitoso.html', {
+        'pedido': pedido,
+    })
+
+
+def pago_error(request):
+    """Vista de error de pago — muestra mensaje y permite reintentar."""
+    return render(request, 'catalogo/pago_error.html')

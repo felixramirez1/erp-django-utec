@@ -1,7 +1,6 @@
-# catalogo/urls.py
-"""URLs del módulo catálogo — W13."""
+# catalogo/urls.py — versión W14 (reemplaza el placeholder de W13)
+"""URLs del módulo catálogo — W14."""
 from django.urls import path
-from django.views.generic import TemplateView
 
 from . import views
 
@@ -12,7 +11,8 @@ urlpatterns = [
     path('',
          views.CatalogoView.as_view(),
          name='catalogo'),
-    # Carrito
+
+    # Carrito (W13)
     path('carrito/',
          views.ver_carrito,
          name='carrito'),
@@ -28,11 +28,15 @@ urlpatterns = [
     path('carrito/vaciar/',
          views.vaciar_carrito,
          name='vaciar'),
-    # Checkout — se implementa en W14
-    path('checkout/',
-         TemplateView.as_view(
-             template_name='catalogo/checkout_pendiente.html'
-         ),
-         name='checkout'),
-]
 
+    # Checkout con Stripe (W14)
+    path('checkout/',
+         views.checkout,
+         name='checkout'),
+    path('pago-exitoso/<int:pedido_id>/',
+         views.pago_exitoso,
+         name='pago_exitoso'),
+    path('pago-error/',
+         views.pago_error,
+         name='pago_error'),
+]
