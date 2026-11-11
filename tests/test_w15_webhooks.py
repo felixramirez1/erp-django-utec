@@ -186,3 +186,37 @@ class WebhookPagoFallidoTest(TestCase):
         self.assertEqual(r.status_code, 200)
         self.pedido.refresh_from_db()
         self.assertEqual(self.pedido.estado, 'cancelado')
+
+
+class WebhookStripeObjectTest(TestCase):
+    """Regresión: con stripe >= 15 el evento real es un StripeObject
+    (no un dict). Antes provocaba HTTP 500 en producción."""
+
+    def setUp(self):
+        cat         = Categoria.objects.create(nombre='Cat')
+        self.prod   = Producto.objects.create(
+            nombre='P', precio=Decimal('500.00'), stock=10, categoria=cat
+        )
+        cli         = Cliente.objects.create(nombre='C', correo='c3@t.com')
+        self.pedido = _crear_pedido_con_snapshot(cli, self.prod, cantidad=2)
+
+    @patch('catalogo.webhook_views.stripe.Webhook.construct_event')
+    def test_evento_stripe_object_real(self, mock_construct):
+        """StripeObject real → 200, pedido 'pagado' y stock descontado."""
+        import stripe
+        datos = _crear_evento('payment_intent.succeeded', self.pedido.pk)
+        datos['data']['object']['object'] = 'payment_intent'
+        datos.update({'id': 'evt_test', 'object': 'event'})
+        mock_construct.return_value = stripe.Event.construct_from(datos, 'sk_test')
+
+        r = self.client.post(
+            reverse('catalogo:webhook'),
+            data=b'{}',
+            content_type='application/json',
+            HTTP_STRIPE_SIGNATURE='t=123,v1=ok'
+        )
+        self.assertEqual(r.status_code, 200)
+        self.pedido.refresh_from_db()
+        self.prod.refresh_from_db()
+        self.assertEqual(self.pedido.estado, 'pagado')
+        self.assertEqual(self.prod.stock, 8)
