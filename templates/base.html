@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#060814">
+    <meta name="theme-color" content="#0D1018">
     <title>{% block title %}Inicio{% endblock %} · ConShop</title>
 
-    <!-- Evita el parpadeo al cargar: aplica el tema guardado antes de pintar -->
+    <!-- Favicon: control de consola sobre rojo -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23D9202F'/%3E%3Cg transform='translate(3.5 3.5) scale(.71)' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12h4M8 10v4'/%3E%3Cpath d='M17.3 5H6.7a4 4 0 0 0-3.9 3.1l-1.5 6.3A3 3 0 0 0 4.2 18c.9 0 1.7-.5 2.1-1.2l.8-1.3h9.8l.8 1.3c.4.7 1.2 1.2 2.1 1.2a3 3 0 0 0 2.9-3.6l-1.5-6.3A4 4 0 0 0 17.3 5Z'/%3E%3C/g%3E%3C/svg%3E">
+
+    <!-- Anti-parpadeo de tema -->
     <script>
         (function () {
             try {
@@ -17,185 +20,202 @@
         })();
     </script>
 
-    <!-- Google Fonts: Space Grotesk (títulos) + Inter (texto) + JetBrains Mono (código) -->
+    <!-- Tipografías: dos familias, roles distintos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- ConShop · Sistema de diseño -->
+    <!-- ConShop · Sistema visual "Obsidiana + ABXY" -->
     <style>
-        /* ============ TOKENS · MODO CLARO (luminoso y colorido) ============ */
-        :root, [data-theme="light"] {
-            --clr-bg      : #F3F5FF;
-            --clr-surface : #FFFFFF;
-            --clr-surface-a: rgba(255,255,255,.78);
-            --clr-text    : #0F1226;
-            --clr-muted   : #5B6283;
-            --clr-border  : #DDE1F3;
-            --clr-ice     : #EEF1FD;
-            --clr-cream   : #FFE9EE;
-            --clr-navy    : #0F1226;
-            --clr-gold    : #E11D48;   /* acento principal */
-            --clr-royal   : #E11D48;
-            --clr-amber   : #BE123C;
-            --clr-sky     : #2563EB;
-            --clr-violet  : #7C3AED;
-            --clr-cyan    : #0891B2;
-            --clr-ok      : #059669;
-            --clr-danger  : #DC2626;
-            --clr-brand   : #0F1226;
-            --clr-on-gold : #FFFFFF;
-            --grad        : linear-gradient(135deg,#F43F5E 0%,#E11D48 42%,#9333EA 100%);
-            --glow        : rgba(244,63,94,.20);
-            --glow-b      : rgba(124,58,237,.16);
-            --glow-c      : rgba(14,165,233,.16);
-            --grid        : rgba(80,90,170,.07);
-            --shadow-sm   : 0 1px 2px rgba(40,50,120,.06), 0 2px 8px rgba(40,50,120,.04);
-            --shadow-md   : 0 14px 34px -10px rgba(225,29,72,.28);
-        }
-        /* ============ TOKENS · MODO OSCURO (neón profundo) ============ */
-        [data-theme="dark"] {
-            --clr-bg      : #060814;
-            --clr-surface : #0D1122;
-            --clr-surface-a: rgba(13,17,34,.76);
-            --clr-text    : #F1F4FF;
-            --clr-muted   : #9AA4C7;
-            --clr-border  : #1F2747;
-            --clr-ice     : #131936;
-            --clr-cream   : #2B1124;
-            --clr-navy    : #151B38;
-            --clr-gold    : #FF4466;
-            --clr-royal   : #FF4466;
-            --clr-amber   : #FF6B85;
-            --clr-sky     : #6EA8FF;
-            --clr-violet  : #A78BFA;
-            --clr-cyan    : #22D3EE;
-            --clr-ok      : #34F5A8;
-            --clr-danger  : #FF6B7F;
-            --clr-brand   : #FFFFFF;
-            --clr-on-gold : #FFFFFF;
-            --grad        : linear-gradient(135deg,#FF4466 0%,#FF2E88 45%,#8B5CF6 100%);
-            --glow        : rgba(255,68,102,.24);
-            --glow-b      : rgba(139,92,246,.22);
-            --glow-c      : rgba(34,211,238,.14);
-            --grid        : rgba(130,150,255,.07);
-            --shadow-sm   : 0 1px 2px rgba(0,0,0,.5);
-            --shadow-md   : 0 16px 40px -12px rgba(255,68,102,.40);
+        /* =====================================================
+           TOKENS
+           Base grafito, un solo acento (rojo de consola) y los
+           cuatro colores de los botones ABXY como código de color.
+           ===================================================== */
+        :root {
+            --font-display: 'Space Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif;
+            --font-body   : 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+            /* Jerarquía de radios */
+            --r-card: 14px;
+            --r-ctl : 10px;
+            --r-pill: 999px;
         }
 
-        /* ============ BASE ============ */
+        /* ---------- Modo oscuro (por defecto) ---------- */
+        [data-theme="dark"] {
+            --clr-bg           : #0D1018;
+            --clr-surface      : #161B27;
+            --clr-surface-2    : #1D2332;
+            --clr-text         : #ECEFF5;
+            --clr-muted        : #9AA3B5;
+            --clr-border       : rgba(255, 255, 255, 0.09);
+            --clr-border-strong: rgba(255, 255, 255, 0.18);
+
+            --clr-accent       : #FF3B4E;   /* texto, precios, detalles */
+            --clr-accent-solid : #D9202F;   /* fondo de botones (5:1 con blanco) */
+            --clr-accent-press : #BF1B29;
+            --clr-ok           : #3DDC97;
+            --clr-danger       : #FF6B7F;
+            --clr-focus        : #6AA9F0;
+
+            --abxy-y: #E8C547;
+            --abxy-b: #4A90D9;
+            --abxy-r: #E5484D;
+            --abxy-g: #39D98A;
+
+            --stage-glow: rgba(255, 59, 78, 0.18);
+            --ped-a     : rgba(255, 59, 78, 0.38);
+            --ped-b     : rgba(255, 59, 78, 0);
+            --shadow-ink: #000000;
+            --elev      : 0 16px 32px -14px rgba(0, 0, 0, 0.65);
+
+            --bs-body-color-rgb: 236, 239, 245;
+            --bs-body-bg-rgb   : 13, 16, 24;
+            --bs-link-color-rgb      : 106, 169, 240;
+            --bs-link-hover-color-rgb: 150, 196, 250;
+        }
+
+        /* ---------- Modo claro (hueso frío) ---------- */
+        [data-theme="light"] {
+            --clr-bg           : #EEF1F6;
+            --clr-surface      : #FFFFFF;
+            --clr-surface-2    : #F4F6FA;
+            --clr-text         : #12151F;
+            --clr-muted        : #556075;
+            --clr-border       : rgba(18, 24, 40, 0.11);
+            --clr-border-strong: rgba(18, 24, 40, 0.22);
+
+            --clr-accent       : #C21F32;
+            --clr-accent-solid : #D9202F;
+            --clr-accent-press : #B01824;
+            --clr-ok           : #0F8F5F;
+            --clr-danger       : #C21F32;
+            --clr-focus        : #1D5FBF;
+
+            --abxy-y: #B58900;
+            --abxy-b: #2F6FB8;
+            --abxy-r: #D43A40;
+            --abxy-g: #16A36A;
+
+            --stage-glow: rgba(217, 32, 47, 0.10);
+            --ped-a     : rgba(217, 32, 47, 0.22);
+            --ped-b     : rgba(217, 32, 47, 0);
+            --shadow-ink: #1B2233;
+            --elev      : 0 18px 30px -16px rgba(16, 24, 40, 0.28);
+
+            --bs-body-color-rgb: 18, 21, 31;
+            --bs-body-bg-rgb   : 238, 241, 246;
+            --bs-link-color-rgb      : 29, 95, 191;
+            --bs-link-hover-color-rgb: 20, 70, 150;
+        }
+
+        /* Alinea las variables internas de Bootstrap con los tokens:
+           formularios, listas, menús, etc. toman la misma paleta. */
+        html[data-theme] {
+            --bs-body-bg: var(--clr-bg);
+            --bs-body-color: var(--clr-text);
+            --bs-border-color: var(--clr-border);
+            --bs-secondary-color: var(--clr-muted);
+            --bs-secondary-bg: var(--clr-surface-2);
+            --bs-tertiary-bg: var(--clr-surface-2);
+            --bs-emphasis-color: var(--clr-text);
+            --bs-body-font-family: var(--font-body);
+        }
+
+        /* =====================================================
+           BASE
+           ===================================================== */
         *, *::before, *::after { box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         body {
-            font-family: 'Inter','Segoe UI',sans-serif;
+            font-family: var(--font-body);
             font-size: 15px;
-            line-height: 1.6;
+            line-height: 1.55;
             color: var(--clr-text);
+            background-color: var(--clr-bg);
             margin: 0;
-            background:
-                radial-gradient(900px 520px at 90% -12%, var(--glow), transparent 62%),
-                radial-gradient(760px 480px at -8% 8%,  var(--glow-b), transparent 60%),
-                radial-gradient(900px 520px at 50% 118%, var(--glow-c), transparent 60%),
-                var(--clr-bg);
-            background-attachment: fixed;
-            transition: background-color .3s, color .3s;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
-        /* Cuadrícula tenue que se desvanece hacia abajo */
-        body::before {
-            content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-            background-image:
-                linear-gradient(var(--grid) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-            background-size: 52px 52px;
-            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 0%, transparent 75%);
-                    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 0%, transparent 75%);
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-display);
+            letter-spacing: -0.01em;
         }
-        h1, h2, h3, h4, .erp-brand, .erp-card-header {
-            font-family: 'Space Grotesk','Inter',sans-serif;
-            letter-spacing: -.01em;
-        }
-        a { color: var(--clr-sky); }
-        ::selection { background: var(--clr-gold); color: #fff; }
-        :focus-visible { outline: 2px solid var(--clr-cyan); outline-offset: 2px; }
-        ::-webkit-scrollbar { width: 10px; height: 10px; }
-        ::-webkit-scrollbar-track { background: var(--clr-bg); }
-        ::-webkit-scrollbar-thumb { background: var(--clr-border); border-radius: 10px; border: 2px solid var(--clr-bg); }
-        ::-webkit-scrollbar-thumb:hover { background: var(--clr-gold); }
+        ::selection { background: color-mix(in srgb, var(--clr-accent) 35%, transparent); }
 
-        /* ============ BARRA DE NAVEGACIÓN ============ */
+        /* Foco visible, claramente distinto del rojo de los botones */
+        :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+            outline: 2px solid var(--clr-focus);
+            outline-offset: 3px;
+        }
+
+        /* =====================================================
+           TRANSICIÓN ENTRE PÁGINAS (nativa, sin retrasos ni JS)
+           Si el navegador no la soporta, simplemente navega normal.
+           ===================================================== */
+        @media (prefers-reduced-motion: no-preference) {
+            @view-transition { navigation: auto; }
+        }
+        ::view-transition-old(root),
+        ::view-transition-new(root) { animation-duration: .18s; }
+        .erp-navbar { view-transition-name: erp-navbar; }
+
+        /* =====================================================
+           BARRA DE NAVEGACIÓN
+           Es el único elemento con desenfoque de fondo.
+           ===================================================== */
         .erp-navbar {
             position: sticky; top: 0; z-index: 50;
-            background: var(--clr-surface-a);
-            -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4);
+            background: color-mix(in srgb, var(--clr-bg) 84%, transparent);
+            -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2);
             border-bottom: 1px solid var(--clr-border);
-            padding: .7rem 1.5rem;
-            display: flex; align-items: center;
-            justify-content: space-between; flex-wrap: wrap; gap: .5rem;
-        }
-        .erp-navbar::after {
-            content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
-            background: linear-gradient(90deg, transparent, var(--clr-gold), var(--clr-violet), var(--clr-cyan), transparent);
-            opacity: .75; pointer-events: none;
+            padding: .7rem 1.75rem;
+            display: flex; align-items: center; justify-content: space-between;
         }
         .erp-brand {
-            display: inline-flex; align-items: center; gap: .6rem;
-            font-size: 1.15rem; font-weight: 700;
-            color: var(--clr-brand) !important;
-            text-decoration: none;
+            display: inline-flex; align-items: center; gap: .65rem;
+            font-family: var(--font-display);
+            font-size: 1.2rem; font-weight: 700; letter-spacing: -0.01em;
+            color: var(--clr-text); text-decoration: none;
         }
+        .erp-brand:hover { color: var(--clr-text); }
         .erp-brand-mark {
-            width: 36px; height: 36px; border-radius: 10px;
-            background: var(--grad); color: #fff;
+            width: 36px; height: 36px; border-radius: var(--r-ctl);
+            background: var(--clr-accent-solid); color: #fff;
             display: inline-flex; align-items: center; justify-content: center;
-            box-shadow: 0 6px 20px -4px var(--clr-gold);
-            transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
         }
-        .erp-brand:hover .erp-brand-mark { transform: rotate(-8deg) scale(1.08); box-shadow: 0 8px 26px -2px var(--clr-gold); }
-        .erp-brand-mark svg { width: 20px; height: 20px; }
-        .erp-brand small {
-            font-family: 'Inter',sans-serif; font-weight: 400;
-            font-size: .82rem; color: var(--clr-muted);
-        }
+        .erp-brand-mark svg { width: 21px; height: 21px; }
+
         .erp-nav-links { display: flex; align-items: center; gap: .15rem; flex-wrap: wrap; }
         .erp-nav-link {
             position: relative;
-            color: var(--clr-muted) !important;
-            font-size: .9rem; font-weight: 500;
-            padding: .42rem .8rem; border-radius: 9px;
+            color: var(--clr-muted);
+            font-size: .9rem; font-weight: 600;
+            padding: .45rem .85rem; border-radius: 8px;
             text-decoration: none;
-            transition: background .2s, color .2s, transform .2s;
+            transition: background-color .18s ease, color .18s ease;
         }
-        .erp-nav-link::after {
-            content: ""; position: absolute; left: 22%; right: 22%; bottom: 3px; height: 2px;
-            border-radius: 2px; background: var(--grad);
-            transform: scaleX(0); transform-origin: center;
-            transition: transform .3s cubic-bezier(.22,1,.36,1);
+        .erp-nav-link:hover { background: var(--clr-surface-2); color: var(--clr-text); }
+        .erp-nav-link.active { background: var(--clr-surface-2); color: var(--clr-text); }
+        .erp-nav-link.active::after {
+            content: ""; position: absolute; left: .85rem; right: .85rem; bottom: .22rem;
+            height: 2px; border-radius: 2px; background: var(--clr-accent);
         }
-        .erp-nav-link:hover { background: var(--clr-ice); color: var(--clr-text) !important; transform: translateY(-1px); }
-        .erp-nav-link:hover::after, .erp-nav-link.active::after { transform: scaleX(1); }
-        .erp-nav-link.active {
-            background: var(--clr-cream); color: var(--clr-gold) !important;
-        }
-        .erp-nav-sep { width: 1px; height: 22px; background: var(--clr-border); margin: 0 .6rem; }
+        .erp-nav-sep { width: 1px; height: 22px; background: var(--clr-border-strong); margin: 0 .5rem; }
+
         .theme-toggle, .nav-burger {
-            background: transparent; color: var(--clr-text);
-            border: 1px solid var(--clr-border); border-radius: 10px;
+            background: var(--clr-surface); color: var(--clr-text);
+            border: 1px solid var(--clr-border-strong); border-radius: var(--r-ctl);
             width: 36px; height: 36px; cursor: pointer;
             display: inline-flex; align-items: center; justify-content: center;
-            transition: background .2s, border-color .2s, box-shadow .2s, transform .2s;
+            transition: background-color .18s ease, border-color .18s ease;
         }
-        .theme-toggle:hover, .nav-burger:hover {
-            background: var(--clr-ice); border-color: var(--clr-gold);
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--clr-gold) 18%, transparent), 0 6px 18px -6px var(--clr-gold);
-        }
-        .theme-toggle:active, .nav-burger:active { transform: scale(.92); }
-        .theme-toggle svg, .nav-burger svg { width: 18px; height: 18px; transition: transform .45s cubic-bezier(.34,1.56,.64,1); }
-        .theme-toggle:hover svg { transform: rotate(90deg) scale(1.1); }
+        .theme-toggle:hover, .nav-burger:hover { background: var(--clr-surface-2); border-color: var(--clr-muted); }
+        .theme-toggle svg, .nav-burger svg { width: 18px; height: 18px; }
         [data-theme="dark"]  .i-moon { display: none; }
         [data-theme="light"] .i-sun  { display: none; }
         .nav-burger { display: none; }
@@ -206,199 +226,215 @@
             .erp-nav-sep { display: none; }
         }
 
-        /* ============ CONTENIDO ============ */
-        .erp-main { padding: 2rem 0 3rem; min-height: calc(100vh - 130px); }
+        /* =====================================================
+           CONTENIDO
+           ===================================================== */
+        .erp-main { padding: 2.2rem 0 3.5rem; min-height: calc(100vh - 140px); }
 
-        /* ============ TARJETAS (con foco de luz que sigue al cursor) ============ */
-        .erp-card {
-            position: relative; isolation: isolate;
-            background: linear-gradient(180deg, color-mix(in srgb, var(--clr-surface) 92%, var(--clr-gold)) 0%, var(--clr-surface) 38%);
-            border: 1px solid var(--clr-border);
-            border-radius: 14px; box-shadow: var(--shadow-sm);
-            padding: 1.5rem; margin-bottom: 1.5rem;
-            transition: border-color .25s, box-shadow .25s, transform .25s;
-        }
-        .erp-card::before, .module-card::before {
-            content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
-            background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 0%),
-                        color-mix(in srgb, var(--mc, var(--clr-gold)) 20%, transparent), transparent 65%);
-            opacity: 0; transition: opacity .3s; pointer-events: none;
-        }
-        .erp-card:hover::before, .module-card:hover::before { opacity: 1; }
-        .erp-card:hover { border-color: color-mix(in srgb, var(--clr-gold) 55%, var(--clr-border)); box-shadow: var(--shadow-md); }
-        .erp-card-header {
+        .erp-page-title, h2 {
+            font-family: var(--font-display);
+            font-size: 1.6rem; font-weight: 700; letter-spacing: -0.015em;
             color: var(--clr-text);
-            padding: 0 0 .9rem;
-            border-bottom: 1px solid var(--clr-border);
-            font-size: 1.05rem; font-weight: 600;
-            margin: 0 0 1.25rem;
+            margin-bottom: 1.25rem;
+            display: flex; align-items: center; gap: .75rem;
         }
 
-        /* ============ TABLAS ============ */
-        .erp-table {
-            width: 100%; border-collapse: separate; border-spacing: 0;
+        /* ---------- Tarjetas: bordes hacen el trabajo, sin sombra en reposo ---------- */
+        .erp-card, .card {
+            --bs-card-bg: var(--clr-surface);
+            --bs-card-color: var(--clr-text);
+            --bs-card-border-color: var(--clr-border);
+            --bs-card-border-radius: var(--r-card);
+            --bs-card-inner-border-radius: calc(var(--r-card) - 1px);
+            --bs-card-cap-bg: var(--clr-surface-2);
+            --bs-card-spacer-y: 1.1rem;
+            --bs-card-spacer-x: 1.25rem;
+            position: relative;
+            background: var(--clr-surface);
+            color: var(--clr-text);
             border: 1px solid var(--clr-border);
-            border-radius: 14px; overflow: hidden;
-            box-shadow: var(--shadow-sm);
+            border-radius: var(--r-card);
+            padding: 1.6rem; margin-bottom: 1.5rem;
+            transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
         }
-        .erp-table thead th {
-            background: linear-gradient(180deg, var(--clr-ice), color-mix(in srgb, var(--clr-ice) 80%, var(--clr-gold)));
-            color: var(--clr-muted);
-            font-weight: 600; font-size: .82rem;
-            padding: .8rem 1rem; border-bottom: 2px solid color-mix(in srgb, var(--clr-gold) 55%, var(--clr-border));
-        }
-        .erp-table tbody td {
-            background: var(--clr-surface); color: var(--clr-text);
-            padding: .7rem 1rem;
-            border-bottom: 1px solid var(--clr-border); font-size: .9rem;
-            transition: background .2s, box-shadow .2s;
-        }
-        .erp-table tbody tr:last-child td { border-bottom: none; }
-        .erp-table tbody tr:hover td { background: color-mix(in srgb, var(--clr-gold) 8%, var(--clr-surface)); }
-        .erp-table tbody tr:hover td:first-child { box-shadow: inset 3px 0 0 var(--clr-gold); }
-        .erp-table tfoot td {
-            background: var(--clr-ice); color: var(--clr-text);
-            font-weight: 600; border-top: 1px solid var(--clr-border);
-            padding: .75rem 1rem;
+        /* Si la tarjeta ya trae card-body / imagen / cabecera, no duplica el relleno */
+        .card:has(> .card-body, > .card-img-top, > .card-header) { padding: 0; }
+        .card-img-top { background: var(--clr-surface-2); }
+        /* Tarjetas con imagen (tipo producto): elevación sutil al pasar el mouse */
+        .card:has(> .card-img-top):hover {
+            transform: translateY(-3px);
+            box-shadow: var(--elev);
+            border-color: var(--clr-border-strong);
         }
 
-        /* ============ BOTONES (brillo, elevación, pulsación y onda) ============ */
+        /* ---------- Tablas: aireadas, sin mayúsculas, números tabulares ---------- */
+        .table-responsive { overflow-x: auto; border-radius: var(--r-card); }
+
+        .table, .erp-table {
+            --bs-table-bg: transparent;
+            --bs-table-color: var(--clr-text);
+            --bs-table-border-color: var(--clr-border);
+            --bs-table-striped-bg: var(--clr-surface-2);
+            --bs-table-striped-color: var(--clr-text);
+            --bs-table-hover-bg: var(--clr-surface-2);
+            --bs-table-hover-color: var(--clr-text);
+            width: 100%; border-collapse: separate; border-spacing: 0;
+            background: transparent; color: var(--clr-text);
+            margin-bottom: 0;
+            font-variant-numeric: tabular-nums;
+        }
+        .table > :not(caption) > * > *,
+        .erp-table th, .erp-table td { padding: .9rem 1.1rem; }
+        .table thead th, .erp-table thead th {
+            background: var(--clr-surface-2);
+            color: var(--clr-muted);
+            font-weight: 600; font-size: .85rem;
+            border-bottom: 1px solid var(--clr-border);
+        }
+        .table tbody td, .erp-table tbody td {
+            border-bottom: 1px solid var(--clr-border);
+            font-size: .92rem;
+        }
+        .table tbody tr:last-child td, .erp-table tbody tr:last-child td { border-bottom: none; }
+        .table > tbody > tr:hover > * { --bs-table-bg-state: var(--clr-surface-2); }
+        .erp-table tbody tr:hover td { background: var(--clr-surface-2); }
+
+        td a { color: var(--clr-text); text-decoration: none; font-weight: 600; }
+        td a:hover { color: var(--clr-accent); }
+        /* El rojo de acento se reserva para precios */
+        .text-danger, .price-tag {
+            color: var(--clr-accent) !important;
+            font-weight: 700; font-variant-numeric: tabular-nums;
+        }
+        .badge { border-radius: var(--r-pill); font-weight: 600; }
+
+        /* ---------- Formularios ---------- */
+        .form-control, .form-select {
+            background-color: var(--clr-surface-2);
+            border-color: var(--clr-border-strong);
+            color: var(--clr-text);
+            border-radius: var(--r-ctl);
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: var(--clr-surface-2);
+            color: var(--clr-text);
+            border-color: var(--clr-focus);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--clr-focus) 28%, transparent);
+        }
+
+        /* =====================================================
+           BOTONES
+           Brillo y ripple solo en el botón principal.
+           El resto es sobrio; sin escalado al pasar el mouse.
+           ===================================================== */
+        .btn { --bs-btn-border-radius: var(--r-ctl); --bs-btn-font-weight: 600; }
+
         .btn-erp-primary, .btn-erp-gold, .btn-erp-danger, .btn-erp-outline {
             position: relative; overflow: hidden; isolation: isolate;
-            border-radius: 10px; padding: .5rem 1.15rem;
-            font-weight: 600; font-size: .88rem;
-            cursor: pointer; text-decoration: none; display: inline-block;
-            border: 1px solid transparent;
-            transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .25s, background-color .2s, color .2s, border-color .2s;
+            display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+            padding: .6rem 1.3rem;
+            border: 1px solid transparent; border-radius: var(--r-ctl);
+            font-weight: 600; font-size: .9rem; line-height: 1.3;
+            text-decoration: none; cursor: pointer;
+            transition: background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease, transform .1s ease;
             -webkit-tap-highlight-color: transparent;
         }
-        .btn-erp-primary:hover, .btn-erp-gold:hover, .btn-erp-danger:hover, .btn-erp-outline:hover { transform: translateY(-2px); }
-        .btn-erp-primary:active, .btn-erp-gold:active, .btn-erp-danger:active, .btn-erp-outline:active { transform: translateY(0) scale(.97); }
+        .btn:active, .btn-erp-primary:active, .btn-erp-gold:active,
+        .btn-erp-danger:active, .btn-erp-outline:active { transform: translateY(1px); }
 
-        /* Principal con degradado y barrido de luz */
-        .btn-erp-gold {
-            background: var(--grad); background-size: 160% 100%; background-position: left center;
-            color: var(--clr-on-gold);
-            box-shadow: 0 8px 22px -8px var(--clr-gold), inset 0 1px 0 rgba(255,255,255,.28);
-            transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .25s, background-position .5s;
+        /* Principal */
+        .btn-erp-gold, .btn-erp-primary {
+            background: var(--clr-accent-solid); border-color: var(--clr-accent-solid); color: #fff;
         }
-        .btn-erp-gold::before {
-            content: ""; position: absolute; inset: 0; z-index: -1;
-            background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.42) 50%, transparent 70%);
-            transform: translateX(-130%); transition: transform .75s cubic-bezier(.22,1,.36,1);
+        .btn-erp-gold:hover, .btn-erp-primary:hover {
+            background: var(--clr-accent-press); border-color: var(--clr-accent-press); color: #fff;
         }
-        .btn-erp-gold:hover { color: var(--clr-on-gold); background-position: right center;
-            box-shadow: 0 14px 30px -8px var(--clr-gold), 0 0 0 4px color-mix(in srgb, var(--clr-gold) 20%, transparent), inset 0 1px 0 rgba(255,255,255,.35); }
-        .btn-erp-gold:hover::before { transform: translateX(130%); }
-
-        /* Secundario: neutro que se enciende con el degradado */
-        .btn-erp-primary { background: var(--clr-text); color: var(--clr-bg); box-shadow: var(--shadow-sm); }
-        .btn-erp-primary::after {
-            content: ""; position: absolute; inset: 0; z-index: -1; background: var(--grad);
-            opacity: 0; transition: opacity .3s;
+        .btn-primary {
+            --bs-btn-color: #fff;
+            --bs-btn-bg: var(--clr-accent-solid);
+            --bs-btn-border-color: var(--clr-accent-solid);
+            --bs-btn-hover-color: #fff;
+            --bs-btn-hover-bg: var(--clr-accent-press);
+            --bs-btn-hover-border-color: var(--clr-accent-press);
+            --bs-btn-active-color: #fff;
+            --bs-btn-active-bg: var(--clr-accent-press);
+            --bs-btn-active-border-color: var(--clr-accent-press);
+            --bs-btn-disabled-bg: var(--clr-accent-solid);
+            --bs-btn-disabled-border-color: var(--clr-accent-solid);
+            --bs-btn-focus-shadow-rgb: 217, 32, 47;
         }
-        .btn-erp-primary:hover { color: #fff; box-shadow: 0 14px 30px -8px var(--clr-gold); }
-        .btn-erp-primary:hover::after { opacity: 1; }
+        .btn-erp-gold::after, .btn-erp-primary::after, .btn-primary::after {
+            content: ""; position: absolute; inset: 0; pointer-events: none;
+            background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.28) 50%, transparent 70%);
+            transform: translateX(-120%); transition: transform .6s ease;
+        }
+        .btn-erp-gold:hover::after, .btn-erp-primary:hover::after, .btn-primary:hover::after { transform: translateX(120%); }
+        .btn-primary { position: relative; overflow: hidden; isolation: isolate; }
 
-        .btn-erp-danger { background: transparent; color: var(--clr-danger); border-color: var(--clr-danger); }
-        .btn-erp-danger:hover { background: var(--clr-danger); color: #fff; box-shadow: 0 10px 24px -8px var(--clr-danger); }
+        /* Peligro */
+        .btn-erp-danger { background: transparent; border-color: var(--clr-danger); color: var(--clr-danger); }
+        .btn-erp-danger:hover { background: var(--clr-danger); color: #fff; }
 
+        /* Secundario */
         .btn-erp-outline {
-            background: color-mix(in srgb, var(--clr-surface) 70%, transparent); color: var(--clr-text);
-            border-color: var(--clr-border);
-            -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+            background: transparent; color: var(--clr-text); border-color: var(--clr-border-strong);
         }
-        .btn-erp-outline:hover { color: var(--clr-text); border-color: var(--clr-cyan); background: var(--clr-ice);
-            box-shadow: 0 10px 24px -10px var(--clr-cyan), 0 0 0 3px color-mix(in srgb, var(--clr-cyan) 16%, transparent); }
-        .btn-erp-sm { padding: .28rem .75rem; font-size: .8rem; }
+        .btn-erp-outline:hover { background: var(--clr-surface-2); border-color: var(--clr-muted); color: var(--clr-text); }
+        .btn-outline-secondary {
+            --bs-btn-color: var(--clr-text);
+            --bs-btn-border-color: var(--clr-border-strong);
+            --bs-btn-hover-color: var(--clr-text);
+            --bs-btn-hover-bg: var(--clr-surface-2);
+            --bs-btn-hover-border-color: var(--clr-muted);
+            --bs-btn-active-color: var(--clr-text);
+            --bs-btn-active-bg: var(--clr-surface-2);
+            --bs-btn-active-border-color: var(--clr-muted);
+        }
 
         .erp-ripple {
             position: absolute; border-radius: 50%; pointer-events: none; z-index: 0;
-            background: rgba(255,255,255,.45); transform: scale(0);
-            animation: erp-ripple .6s ease-out forwards;
+            background: rgba(255,255,255,0.4); transform: scale(0);
+            animation: erp-ripple .55s ease-out forwards;
         }
-        @keyframes erp-ripple { to { transform: scale(1); opacity: 0; } }
+        @keyframes erp-ripple { to { transform: scale(2.2); opacity: 0; } }
 
-        /* ============ FORMULARIOS ============ */
-        .erp-label {
-            font-size: .85rem; font-weight: 500; color: var(--clr-muted);
-            display: block; margin-bottom: .35rem;
+        /* =====================================================
+           AVISOS: el color del borde izquierdo indica el estado
+           ===================================================== */
+        .erp-alert-success, .erp-alert-danger, .erp-alert-info {
+            --al: var(--abxy-b);
+            padding: .8rem 1rem;
+            background: var(--clr-surface);
+            color: var(--clr-text);
+            border: 1px solid var(--clr-border);
+            border-left: 4px solid var(--al);
+            border-radius: var(--r-ctl);
+            font-weight: 500;
+            animation: aviso .35s cubic-bezier(.16,1,.3,1) both;
         }
-        .erp-input {
-            background: var(--clr-surface); border: 1px solid var(--clr-border);
-            border-radius: 10px; color: var(--clr-text);
-            padding: .55rem .85rem; width: 100%; font-size: .93rem;
-            transition: border-color .2s, box-shadow .2s, background .2s;
-        }
-        .erp-input:hover { border-color: color-mix(in srgb, var(--clr-gold) 40%, var(--clr-border)); }
-        .erp-input:focus {
-            outline: none; border-color: var(--clr-gold);
-            box-shadow: 0 0 0 4px color-mix(in srgb, var(--clr-gold) 20%, transparent), 0 8px 22px -10px var(--clr-gold);
-        }
+        .erp-alert-success { --al: var(--abxy-g); }
+        .erp-alert-danger  { --al: var(--abxy-r); }
+        @keyframes aviso { from { opacity: 0; transform: translateY(-6px); } }
 
-        /* ============ ETIQUETAS ============ */
-        .badge-erp-active, .badge-erp-inactive, .badge-erp-gold {
-            font-size: .75rem; padding: .22rem .7rem;
-            border-radius: 20px; font-weight: 600;
-            border: 1px solid currentColor; display: inline-block;
-        }
-        .badge-erp-active   { background: color-mix(in srgb, var(--clr-ok) 14%, transparent); color: var(--clr-ok);
-                              box-shadow: 0 0 14px -4px var(--clr-ok); }
-        .badge-erp-inactive { background: color-mix(in srgb, var(--clr-danger) 14%, transparent); color: var(--clr-danger);
-                              box-shadow: 0 0 14px -4px var(--clr-danger); }
-        .badge-erp-gold     { background: var(--clr-cream); color: var(--clr-gold);
-                              box-shadow: 0 0 14px -4px var(--clr-gold); }
-
-        /* ============ ALERTAS ============ */
-        .erp-alert-danger, .erp-alert-info, .erp-alert-success {
-            border: 1px solid var(--clr-border); border-radius: 12px;
-            border-left-width: 4px; padding: .9rem 1.2rem;
-            background: var(--clr-surface); color: var(--clr-text);
-            box-shadow: var(--shadow-sm);
-        }
-        .erp-alert-danger  { border-left-color: var(--clr-danger); background: color-mix(in srgb, var(--clr-danger) 10%, var(--clr-surface)); }
-        .erp-alert-info    { border-left-color: var(--clr-sky);    background: color-mix(in srgb, var(--clr-sky) 10%, var(--clr-surface)); }
-        .erp-alert-success { border-left-color: var(--clr-ok);     background: color-mix(in srgb, var(--clr-ok) 10%, var(--clr-surface)); }
-
-        /* ============ TÍTULO DE PÁGINA ============ */
-        .erp-page-title {
-            position: relative;
-            display: flex; align-items: center; gap: 1rem;
-            margin-bottom: 1.5rem; padding-bottom: .9rem;
-            border-bottom: 1px solid var(--clr-border);
-        }
-        .erp-page-title::after {
-            content: ""; position: absolute; left: 0; bottom: -1px; width: 84px; height: 3px;
-            border-radius: 3px; background: var(--grad); box-shadow: 0 0 16px var(--clr-gold);
-        }
-        .erp-page-title h2 { font-size: 1.6rem; font-weight: 700; color: var(--clr-text); margin: 0; }
-
-        /* ============ CÓDIGO ============ */
-        code, .mono {
-            font-family: 'JetBrains Mono',Consolas,monospace;
-            font-size: .85em; color: var(--clr-gold);
-            background: var(--clr-ice); padding: .1em .4em; border-radius: 5px;
-        }
-
-        /* ============ PIE DE PÁGINA ============ */
+        /* =====================================================
+           PIE DE PÁGINA
+           ===================================================== */
         .erp-footer {
-            position: relative;
-            color: var(--clr-muted); text-align: center; font-size: .8rem;
-            padding: 1.1rem; border-top: 1px solid var(--clr-border);
-            background: var(--clr-surface-a);
-            -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-        }
-        .erp-footer::before {
-            content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 1px;
-            background: linear-gradient(90deg, transparent, var(--clr-gold), var(--clr-violet), var(--clr-cyan), transparent);
-            opacity: .6;
+            color: var(--clr-muted); text-align: center; font-size: .85rem;
+            padding: 1.4rem; border-top: 1px solid var(--clr-border);
+            background: var(--clr-surface);
         }
 
+        /* =====================================================
+           MOVIMIENTO REDUCIDO
+           ===================================================== */
         @media (prefers-reduced-motion: reduce) {
             html { scroll-behavior: auto; }
-            * { transition: none !important; }
-            .erp-ripple { display: none; }
-            .btn-erp-gold::before { display: none; }
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -410,14 +446,12 @@
 <nav class="erp-navbar">
     <a class="erp-brand" href="/">
         <span class="erp-brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M6 12h4M8 10v4"/>
-                <circle cx="15" cy="13" r=".9" fill="currentColor"/>
-                <circle cx="17.5" cy="11" r=".9" fill="currentColor"/>
                 <path d="M17.3 5H6.7a4 4 0 0 0-3.9 3.1l-1.5 6.3A3 3 0 0 0 4.2 18c.9 0 1.7-.5 2.1-1.2l.8-1.3h9.8l.8 1.3c.4.7 1.2 1.2 2.1 1.2a3 3 0 0 0 2.9-3.6l-1.5-6.3A4 4 0 0 0 17.3 5Z"/>
             </svg>
         </span>
-        <span>ConShop <small>Felix Ramirez</small></span>
+        <span>ConShop <small class="fw-normal text-muted">Felix Ramirez</small></span>
     </a>
 
     <button class="nav-burger" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks"
@@ -438,16 +472,10 @@
             <a href="{% url 'reportes:inicio' %}"
                class="erp-nav-link {% block nav_reportes %}{% endblock %}">Reportes</a>
 
-            <!-- Tienda y carrito -->
             <a href="{% url 'catalogo:catalogo' %}"
-               class="erp-nav-link {% block nav_catalogo %}{% endblock %}">
-                🛒 Tienda
-            </a>
-            <!-- Contador del carrito en la navbar -->
+               class="erp-nav-link {% block nav_catalogo %}{% endblock %}">🛒 Tienda</a>
             {% if carrito_total_items > 0 %}
-            <a href="{% url 'catalogo:carrito' %}"
-               class="erp-nav-link"
-               style="position:relative;">
+            <a href="{% url 'catalogo:carrito' %}" class="erp-nav-link">
                 🛍️ ({{ carrito_total_items }})
             </a>
             {% endif %}
@@ -461,9 +489,9 @@
             {% else %}
                 <a href="/accounts/login/" class="erp-nav-link">Entrar</a>
             {% endif %}
-            <button class="theme-toggle ms-lg-2" id="themeBtn" type="button" title="Cambiar tema" aria-label="Cambiar entre modo claro y oscuro">
-                <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-                <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+            <button class="theme-toggle ms-lg-2" id="themeBtn" type="button" title="Cambiar tema" aria-label="Cambiar tema">
+                <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+                <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
             </button>
         </div>
     </div>
@@ -473,11 +501,9 @@
 {% if messages %}
 <div class="container mt-3">
     {% for m in messages %}
-    <div class="erp-alert-{% if m.tags == 'error' %}danger{% elif m.tags == 'success' %}success{% else %}info{% endif %} d-flex justify-content-between align-items-center mb-2"
-         role="alert">
+    <div class="erp-alert-{% if m.tags == 'error' %}danger{% elif m.tags == 'success' %}success{% else %}info{% endif %} d-flex justify-content-between align-items-center mb-2" role="alert">
         <span>{{ m }}</span>
-        <button onclick="this.parentElement.style.display='none'" aria-label="Cerrar aviso"
-                style="background:none;border:none;cursor:pointer;font-size:1.1rem;color:inherit;">×</button>
+        <button onclick="this.parentElement.style.display='none'" aria-label="Cerrar aviso" style="background:none;border:none;cursor:pointer;font-size:1.1rem;color:inherit;">×</button>
     </div>
     {% endfor %}
 </div>
@@ -498,7 +524,7 @@
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Cambio de tema claro / oscuro -->
+<!-- Cambio de tema -->
 <script>
 (function () {
     var btn  = document.getElementById('themeBtn');
@@ -512,34 +538,23 @@
     });
 })();
 </script>
-<!-- Efectos: onda al pulsar botones y foco de luz que sigue al cursor en tarjetas -->
+
+<!-- Ripple solo en botones principales -->
 <script>
 (function () {
-    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var BTN  = '.btn-erp-primary, .btn-erp-gold, .btn-erp-danger, .btn-erp-outline';
-    var CARD = '.erp-card, .module-card';
-
-    if (!reduce) {
-        document.addEventListener('pointerdown', function (e) {
-            var b = e.target.closest(BTN);
-            if (!b) return;
-            var r = b.getBoundingClientRect();
-            var size = Math.max(r.width, r.height) * 2;
-            var d = document.createElement('span');
-            d.className = 'erp-ripple';
-            d.style.width = d.style.height = size + 'px';
-            d.style.left = (e.clientX - r.left - size / 2) + 'px';
-            d.style.top  = (e.clientY - r.top  - size / 2) + 'px';
-            b.appendChild(d);
-            setTimeout(function () { d.remove(); }, 650);
-        });
-    }
-    document.addEventListener('pointermove', function (e) {
-        var c = e.target.closest(CARD);
-        if (!c) return;
-        var r = c.getBoundingClientRect();
-        c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-        c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    var BTN = '.btn-erp-gold, .btn-erp-primary, .btn-primary';
+    document.addEventListener('pointerdown', function (e) {
+        var b = e.target.closest(BTN);
+        if (!b) return;
+        var r = b.getBoundingClientRect();
+        var size = Math.max(r.width, r.height) * 1.8;
+        var d = document.createElement('span');
+        d.className = 'erp-ripple';
+        d.style.width = d.style.height = size + 'px';
+        d.style.left = (e.clientX - r.left - size / 2) + 'px';
+        d.style.top  = (e.clientY - r.top - size / 2) + 'px';
+        b.appendChild(d);
+        setTimeout(function () { d.remove(); }, 550);
     });
 })();
 </script>
