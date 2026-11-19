@@ -1,28 +1,27 @@
-# docker-compose.yml — Stack completo ERP Django con WeasyPrint
-# Incluye todos los servicios acumulados hasta W18
+# docker-compose.yml — versión W16 completa
 version: '3.9'
 
 services:
 
-  # ── PostgreSQL ─────────────────────────────────────────────────
+  # ── Base de datos PostgreSQL ────────────────────────────────────────
   db:
     image: postgres:15-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB:       ${POSTGRES_DB:-erp_db}
-      POSTGRES_USER:     ${POSTGRES_USER:-erp_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-erp_pass_local}
+      POSTGRES_DB:       erp_db
+      POSTGRES_USER:     erp_user
+      POSTGRES_PASSWORD: erp_pass_local
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-erp_user}"]
+      test: ["CMD-SHELL", "pg_isready -U erp_user -d erp_db"]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 5
 
-  # ── Redis (broker Celery + caché Django) ───────────────────────
+  # ── Broker de mensajes Redis ────────────────────────────────────────
   redis:
     image: redis:7-alpine
     restart: unless-stopped
@@ -32,15 +31,16 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
-      retries: 10
+      retries: 5
 
-  # ── Aplicación Django (con WeasyPrint) ─────────────────────────
+  # ── Aplicación Django ───────────────────────────────────────────────
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     restart: unless-stopped
-    # ENTRYPOINT ya definido en Dockerfile → aquí no se necesita command
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --no-input &&
+             gunicorn core.wsgi --bind 0.0.0.0:8000 --workers 2 --log-file -"
     volumes:
       - .:/app
       - static_volume:/app/staticfiles
@@ -52,78 +52,47 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    env_file:
-      - .env
     environment:
       DJANGO_SETTINGS_MODULE: core.settings_prod
-      DATABASE_URL:   postgresql://${POSTGRES_USER:-erp_user}:${POSTGRES_PASSWORD:-erp_pass_local}@db:5432/${POSTGRES_DB:-erp_db}
-      REDIS_URL:      redis://redis:6379/0
-      REDIS_CACHE_URL: redis://redis:6379/1
+      SECRET_KEY:             dev-clave-docker-no-usar-en-produccion
+      DEBUG:                  "False"
+      DATABASE_URL:           postgres://erp_user:erp_pass_local@db:5432/erp_db
+      REDIS_URL:              redis://redis:6379/0
+      ALLOWED_HOSTS:          localhost,127.0.0.1
+      STRIPE_SECRET_KEY:      sk_test_placeholder
+      STRIPE_PUBLISHABLE_KEY: pk_test_placeholder
+      STRIPE_WEBHOOK_SECRET:  whsec_placeholder
 
-  # ── Celery Worker ──────────────────────────────────────────────
+  # ── Worker de Celery — W16 ──────────────────────────────────────────
   celery_worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     restart: unless-stopped
-    # Sobreescribir el entrypoint del Dockerfile para esta imagen
-    entrypoint: []
     command: celery -A core worker -l info -Q erp_django
     volumes:
       - .:/app
-      - media_volume:/app/media   # necesita acceso a media para exportaciones
     depends_on:
       redis:
         condition: service_healthy
       db:
         condition: service_healthy
-    env_file:
-      - .env
     environment:
       DJANGO_SETTINGS_MODULE: core.settings_prod
-      DATABASE_URL:   postgresql://${POSTGRES_USER:-erp_user}:${POSTGRES_PASSWORD:-erp_pass_local}@db:5432/${POSTGRES_DB:-erp_db}
-      REDIS_URL:      redis://redis:6379/0
+      SECRET_KEY:             dev-clave-docker-no-usar-en-produccion
+      DATABASE_URL:           postgres://erp_user:erp_pass_local@db:5432/erp_db
+      REDIS_URL:              redis://redis:6379/0
+      # Variables de correo (se completarán en W17)
+      SENDGRID_API_KEY:       placeholder
 
-  # ── Celery Beat (scheduler) ────────────────────────────────────
-  celery_beat:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    entrypoint: []
-    command: celery -A core beat -l info
-    volumes:
-      - .:/app
-    depends_on:
-      redis:
-        condition: service_healthy
-      db:
-        condition: service_healthy
-    env_file:
-      - .env
-    environment:
-      DJANGO_SETTINGS_MODULE: core.settings_prod
-      DATABASE_URL:   postgresql://${POSTGRES_USER:-erp_user}:${POSTGRES_PASSWORD:-erp_pass_local}@db:5432/${POSTGRES_DB:-erp_db}
-      REDIS_URL:      redis://redis:6379/0
-
-  # ── Flower (monitor Celery) ────────────────────────────────────
+  # ── Flower — Monitor de Celery — W16 ───────────────────────────────
   flower:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     restart: unless-stopped
-    entrypoint: []
-    command: celery -A core flower --port=5555
+    command: celery -A core flower --port=5555 --broker=redis://redis:6379/0
     ports:
       - "5555:5555"
     depends_on:
       - redis
       - celery_worker
-    env_file:
-      - .env
-    environment:
-      DJANGO_SETTINGS_MODULE: core.settings_prod
-      REDIS_URL:      redis://redis:6379/0
 
 volumes:
   postgres_data:

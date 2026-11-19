@@ -12,6 +12,9 @@ Eventos manejados:
                                     Descontar stock de productos
     payment_intent.payment_failed → Pedido.estado = 'cancelado'
 """
+# catalogo/webhook_views.py — agregar import al inicio:
+from ventas.tasks import enviar_confirmacion_pedido
+
 import logging
 
 import stripe
@@ -89,14 +92,9 @@ def stripe_webhook(request) -> HttpResponse:
 
 # ── HANDLERS INTERNOS ──────────────────────────────────────────────────────
 
+# En la función _manejar_pago_exitoso(), después de save():
 def _manejar_pago_exitoso(payment_intent: dict) -> None:
-    """Procesa un pago confirmado por Stripe.
-
-    Actualiza el Pedido a 'pagado' y descuenta el stock de productos.
-
-    Args:
-        payment_intent: objeto PaymentIntent del evento de Stripe.
-    """
+    # ... (código existente) ...
     pedido_id = _extraer_pedido_id(payment_intent)
     if pedido_id is None:
         return
@@ -107,22 +105,25 @@ def _manejar_pago_exitoso(payment_intent: dict) -> None:
         logger.error(f'Webhook: Pedido {pedido_id} no encontrado en BD.')
         return
 
-    # Actualizar estado del pedido
     if pedido.estado != 'pagado':
         pedido.estado = 'pagado'
         pedido.save(update_fields=['estado'])
         logger.info(
             f'Pedido {pedido.numero_pedido} actualizado a "pagado".'
         )
-
-        # Descontar stock de cada producto del snapshot
         _descontar_stock(pedido)
+
+        # ── NUEVO W16: disparar tarea de confirmación ─────────────────
+        # El webhook es el lugar más confiable para disparar el correo:
+        # se ejecuta incluso si el usuario cerró el navegador antes de
+        # llegar a pago_exitoso().
+        enviar_confirmacion_pedido.delay(pedido.pk)
+        # ─────────────────────────────────────────────────────────────
     else:
         logger.info(
             f'Pedido {pedido.numero_pedido} ya estaba pagado — '
             f'idempotente, sin cambios.'
         )
-
 
 def _manejar_pago_fallido(payment_intent: dict) -> None:
     """Procesa un pago fallido o rechazado.
