@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Confirmación de pedido {{ pedido.numero_pedido }}</title>
+    <style>
+        /* CSS inline — mayor compatibilidad con clientes de correo */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 15px;
+            background: #F5F7FA;
+            color: #1A1A2E;
+        }
+        .wrapper {
+            max-width: 600px;
+            margin: 24px auto;
+            background: #FFFFFF;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 16px rgba(10,35,66,.1);
+        }
+        /* Encabezado */
+        .header {
+            background: #0A2342;
+            padding: 28px 32px;
+            border-bottom: 4px solid #B8860B;
+        }
+        .header-title {
+            color: #D4AF37;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: .03em;
+        }
+        .header-sub {
+            color: rgba(255,255,255,.7);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        /* Cuerpo */
+        .body { padding: 28px 32px; }
+        .greeting {
+            font-size: 17px;
+            margin-bottom: 16px;
+            color: #0A2342;
+        }
+        /* Caja del pedido */
+        .pedido-box {
+            background: #E8F0FB;
+            border-left: 5px solid #0A2342;
+            border-radius: 0 8px 8px 0;
+            padding: 16px 20px;
+            margin: 20px 0;
+        }
+        .pedido-num {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0A2342;
+        }
+        .pedido-total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #B8860B;
+            margin-top: 4px;
+        }
+        /* Tabla de productos */
+        .productos-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .productos-table th {
+            background: #0A2342;
+            color: #FFFFFF;
+            padding: 10px 14px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            text-align: left;
+        }
+        .productos-table th.num { text-align: right; }
+        .productos-table td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #E8F0FB;
+            font-size: 14px;
+        }
+        .productos-table td.num { text-align: right; }
+        .productos-table tr:last-child td { border-bottom: none; }
+        .total-row td {
+            background: #FDF8E8;
+            border-top: 2px solid #B8860B;
+            font-weight: bold;
+            font-size: 15px;
+            padding: 12px 14px;
+        }
+        .total-valor { color: #B8860B; text-align: right; }
+        /* CTA */
+        .cta-section { text-align: center; margin: 24px 0; }
+        .cta-btn {
+            display: inline-block;
+            background: #B8860B;
+            color: #FFFFFF;
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        /* Pie */
+        .footer {
+            background: #F5F7FA;
+            border-top: 1px solid #C8D8EC;
+            padding: 16px 32px;
+            font-size: 12px;
+            color: #5A6A7E;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <!-- ENCABEZADO -->
+    <div class="header">
+        <div class="header-title">✅ ¡Pago confirmado!</div>
+        <div class="header-sub">{{ config.nombre_empresa }}</div>
+    </div>
+
+    <!-- CUERPO -->
+    <div class="body">
+        <p class="greeting">
+            Hola, <strong>{{ pedido.cliente.nombre }}</strong>:
+        </p>
+        <p style="color:#5A6A7E;margin-bottom:16px;">
+            Gracias por tu compra. Tu pedido ha sido confirmado
+            y está siendo procesado.
+        </p>
+
+        <!-- Número y total del pedido -->
+        <div class="pedido-box">
+            <div class="pedido-num">
+                Pedido {{ pedido.numero_pedido }}
+            </div>
+            <div class="pedido-total">
+                Total pagado: ${{ pedido.total_pagado }}
+            </div>
+            <div style="color:#5A6A7E;font-size:13px;margin-top:6px;">
+                Fecha: {{ pedido.fecha_pedido|date:"d/m/Y H:i" }}
+            </div>
+        </div>
+
+        <!-- Tabla de productos del snapshot -->
+        {% if items %}
+        <table class="productos-table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th class="num">Precio</th>
+                    <th class="num">Cant.</th>
+                    <th class="num">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.nombre }}</td>
+                    <td class="num">${{ item.precio }}</td>
+                    <td class="num">{{ item.cantidad }}</td>
+                    <td class="num">
+                        ${% widthratio item.cantidad 1 item.precio %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="3">Total:</td>
+                    <td class="total-valor">${{ pedido.total_pagado }}</td>
+                </tr>
+            </tfoot>
+        </table>
+        {% endif %}
+
+        <!-- Botón CTA -->
+        <div class="cta-section">
+            <a href="{{ url_pedido }}" class="cta-btn">
+                Ver detalle del pedido
+            </a>
+        </div>
+
+        <p style="color:#5A6A7E;font-size:13px;margin-top:8px;">
+            Si tienes preguntas, responde a este correo.<br>
+            Equipo de {{ config.nombre_empresa }}
+        </p>
+    </div>
+
+    <!-- PIE -->
+    <div class="footer">
+        <p>{{ config.nombre_empresa }}
+           {% if config.rfc %}· RFC: {{ config.rfc }}{% endif %}</p>
+        <p style="margin-top:4px;">
+            Este correo fue generado automáticamente. No responder directamente.
+        </p>
+    </div>
+
+</div>
+</body>
+</html>

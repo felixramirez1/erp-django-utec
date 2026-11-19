@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'reportes',
     'configuracion',
     'catalogo',                    # ← nuevo
+    # core/settings.py — en INSTALLED_APPS, después de rest_framework:
+    'anymail',    # ← agregar
 ]
 
 MIDDLEWARE = [
@@ -143,6 +145,40 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STRIPE_SECRET_KEY     = env('STRIPE_SECRET_KEY',     default='sk_test_placeholder')
 STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY', default='pk_test_placeholder')
 STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET', default='whsec_placeholder')
+
+# core/settings.py — configuración de correo electrónico
+
+# ── CORREO ELECTRÓNICO ────────────────────────────────────────────────────
+# En desarrollo: usar el backend de consola (imprime en terminal)
+# En producción: anymail con SendGrid
+EMAIL_BACKEND = env(
+    'EMAIL_BACKEND',
+    default='django.core.mail.backends.console.EmailBackend'
+)
+
+# Dirección del remitente visible en los correos
+DEFAULT_FROM_EMAIL = env(
+    'DEFAULT_FROM_EMAIL',
+    default='ERP Django <noreply@erp-django.com>'
+)
+
+# Nombre del asunto con prefijo del sistema
+EMAIL_SUBJECT_PREFIX = '[ERP Django] '
+
+# Administradores que reciben alertas del sistema
+ADMINS = [
+    ('Admin ERP', env('ADMIN_EMAIL', default='admin@erp-django.com')),
+]
+
+# Configuración de django-anymail (SendGrid)
+SENDGRID_API_KEY = env('SENDGRID_API_KEY', default='')
+ANYMAIL = {
+    'SENDGRID_API_KEY': SENDGRID_API_KEY,
+    # Reintentar envíos fallidos automáticamente
+    'SEND_DEFAULTS': {
+        'esp_extra': {'ip_pool_name': 'transactional'},
+    },
+}
 
 # ── JAZZMIN — Personalización del admin con Fable 5 AzulERP ───────────────
 JAZZMIN_SETTINGS = {

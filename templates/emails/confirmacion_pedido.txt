@@ -1,0 +1,18 @@
+¡Pago confirmado! — {{ config.nombre_empresa }}
+
+Hola, {{ pedido.cliente.nombre }}:
+
+Tu pedido ha sido confirmado.
+
+PEDIDO: {{ pedido.numero_pedido }}
+TOTAL:  ${{ pedido.total_pagado }}
+FECHA:  {{ pedido.fecha_pedido|date:"d/m/Y H:i" }}
+
+{% for item in items %}
+- {{ item.nombre }} × {{ item.cantidad }} = ${{ item.precio }}
+{% endfor %}
+
+Ver tu pedido: {{ url_pedido }}
+
+Gracias por tu compra.
+{{ config.nombre_empresa }}

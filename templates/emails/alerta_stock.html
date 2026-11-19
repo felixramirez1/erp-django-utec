@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Alerta: Stock bajo en {{ total_productos }} producto(s)</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 15px;
+            background: #F5F7FA;
+            color: #1A1A2E;
+        }
+        .wrapper {
+            max-width: 600px;
+            margin: 24px auto;
+            background: #FFFFFF;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .header {
+            background: #C0392B;
+            padding: 24px 32px;
+            border-bottom: 4px solid #B8860B;
+        }
+        .header-title { color: #FFFFFF; font-size: 20px; font-weight: bold; }
+        .header-sub   { color: rgba(255,255,255,.8); font-size: 13px; margin-top: 4px; }
+        .body { padding: 24px 32px; }
+        .alert-box {
+            background: #FDEDEC;
+            border-left: 5px solid #C0392B;
+            border-radius: 0 8px 8px 0;
+            padding: 14px 18px;
+            margin: 16px 0;
+            font-weight: bold;
+            color: #C0392B;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+        th {
+            background: #0A2342;
+            color: #FFFFFF;
+            padding: 10px 14px;
+            font-size: 12px;
+            text-transform: uppercase;
+            text-align: left;
+        }
+        td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #E8F0FB;
+            font-size: 14px;
+        }
+        .stock-critico { color: #C0392B; font-weight: bold; }
+        .footer {
+            background: #F5F7FA;
+            border-top: 1px solid #C8D8EC;
+            padding: 14px 32px;
+            font-size: 12px;
+            color: #5A6A7E;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <div class="header">
+        <div class="header-title">⚠️ Alerta: Stock bajo</div>
+        <div class="header-sub">
+            {{ total_productos }} producto(s) requieren reposición
+        </div>
+    </div>
+
+    <div class="body">
+        <p style="margin-bottom:12px;">
+            El siguiente reporte fue generado automáticamente el
+            <strong>{{ fecha }}</strong>.
+        </p>
+
+        <div class="alert-box">
+            {{ total_productos }} producto(s) con stock &lt; {{ umbral }} unidades
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th style="text-align:right;">Stock actual</th>
+                    <th>Categoría</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prod in productos_bajos %}
+                <tr>
+                    <td>{{ prod.nombre }}</td>
+                    <td style="text-align:right;" class="stock-critico">
+                        {{ prod.stock }}
+                    </td>
+                    <td>{{ prod.categoria__nombre }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p style="color:#5A6A7E;font-size:13px;margin-top:8px;">
+            Accede al panel de administración para reponer el stock:
+            <a href="{{ url_admin }}" style="color:#0A2342;">
+                {{ url_admin }}
+            </a>
+        </p>
+    </div>
+
+    <div class="footer">
+        <p>Generado por ERP Django · Sistema de alertas automáticas</p>
+    </div>
+
+</div>
+</body>
+</html>
