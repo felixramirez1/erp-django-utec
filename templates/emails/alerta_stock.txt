@@ -1,10 +1,9 @@
-⚠️ ALERTA DE STOCK BAJO — ERP Django
+{% autoescape off %}⚠️ ALERTA DE STOCK BAJO — {{ config.nombre_empresa }}
 Fecha: {{ fecha }}
 
 {{ total_productos }} producto(s) con stock < {{ umbral }} unidades:
-
 {% for prod in productos_bajos %}
-- {{ prod.nombre }}: {{ prod.stock }} unidades
-{% endfor %}
+- {{ prod.nombre }}: {{ prod.stock }} unidades ({{ prod.categoria__nombre }}){% endfor %}
 
 Administración: {{ url_admin }}
+{% endautoescape %}

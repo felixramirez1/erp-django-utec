@@ -26,3 +26,21 @@ stock bajo y reporte diario de ventas.
 - Alerta de stock enviada cuando stock < umbral (W17)
 - Reporte diario ejecutado a las 8:00 AM (W18)
 - python manage.py test → ≥ 155 tests OK
+
+## Sprint Backlog — actualización W17
+
+| Tarea | Estado |
+|---|---|
+| pip install celery redis flower | ✅ W16 |
+| core/celery.py + tareas placeholder | ✅ W16 |
+| pip install django-anymail[sendgrid]==10.3 | ✅ W17 |
+| EMAIL_BACKEND configurado (console dev / SendGrid prod si hay API Key) | ✅ W17 |
+| correo_enviado en Pedido + migración 0004 | ✅ W17 |
+| Template confirmacion_pedido.html + .txt | ✅ W17 |
+| Template alerta_stock.html + .txt | ✅ W17 |
+| enviar_confirmacion_pedido: correo real + idempotencia + retry | ✅ W17 |
+| verificar_stock_bajo: alerta al admin | ✅ W17 |
+| 12 tests con mail.outbox (9 guía + 3 regresión) | ✅ W17 |
+| render.yaml: SENDGRID_API_KEY, DEFAULT_FROM_EMAIL, ADMIN_EMAIL | ✅ W17 |
+| Sender verificado en SendGrid + prueba real en Render | ⏳ W17 (en Render) |
+| Celery Beat + tareas programadas | ⏳ W18 |

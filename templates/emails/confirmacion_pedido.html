@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Confirmación de pedido {{ pedido.numero_pedido }}</title>
     <style>
-        /* CSS inline — mayor compatibilidad con clientes de correo */
+        /* Estilos en <head>: la mayoría de clientes los respetan; los
+           datos críticos además llevan style="" en línea. */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -167,15 +168,13 @@
                     <td>{{ item.nombre }}</td>
                     <td class="num">${{ item.precio }}</td>
                     <td class="num">{{ item.cantidad }}</td>
-                    <td class="num">
-                        ${{ item.subtotal }}
-                    </td>
+                    <td class="num">${{ item.subtotal }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
             <tfoot>
                 <tr class="total-row">
-                    <td colspan="3">Total:</td>
+                    <td colspan="3">Total (IVA incluido):</td>
                     <td class="total-valor">${{ pedido.total_pagado }}</td>
                 </tr>
             </tfoot>
@@ -184,13 +183,13 @@
 
         <!-- Botón CTA -->
         <div class="cta-section">
-            <a href="{{ url_pedido }}" class="cta-btn">
-                Ver detalle del pedido
+            <a href="{{ url_tienda }}" class="cta-btn">
+                Volver a la tienda
             </a>
         </div>
 
         <p style="color:#5A6A7E;font-size:13px;margin-top:8px;">
-            Si tienes preguntas, responde a este correo.<br>
+            Si tienes preguntas, contáctanos.<br>
             Equipo de {{ config.nombre_empresa }}
         </p>
     </div>
