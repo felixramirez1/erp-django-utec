@@ -58,6 +58,12 @@ services:
         sync: false
       - key: AWS_STORAGE_BUCKET_NAME
         sync: false
+            # W16: Celery + Redis (Key Value de Render)
+      - key: REDIS_URL               # Internal Key Value URL (redis://red-...:6379)
+        sync: false
+      - key: CELERY_EMBEDDED_WORKER  # 1 = worker dentro del contenedor web
+        value: "1"
+
 
   # ── Celery Worker ──────────────────────────────────────────────
   - type: worker

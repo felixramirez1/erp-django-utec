@@ -6,12 +6,15 @@ y su invocación desde las vistas.
 Ejecutar con:
     python manage.py test tests.test_w16_celery --verbosity=2
 
+No requiere Redis ni Docker: sin REDIS_URL, settings.py activa el
+modo EAGER (las tareas se ejecutan en el mismo proceso).
+
 Resultado esperado:
-    Ran 8 tests in X.XXXs
+    Ran 9 tests in X.XXXs
     OK
 """
 from decimal import Decimal
-from unittest.mock import call, patch
+from unittest.mock import patch
 
 from django.contrib.auth.models import User
 from django.test import TestCase, override_settings
@@ -42,6 +45,14 @@ class CeleryConfigTest(TestCase):
         tareas = celery_app.tasks.keys()
         self.assertIn('ventas.enviar_confirmacion_pedido', tareas)
         self.assertIn('ventas.verificar_stock_bajo', tareas)
+
+    def test_sin_redis_url_usa_modo_eager(self):
+        """Sin REDIS_URL (laboratorio sin Docker) las tareas son EAGER."""
+        from django.conf import settings
+        if settings.REDIS_URL:
+            self.skipTest('REDIS_URL definida: entorno con Redis.')
+        self.assertTrue(settings.CELERY_TASK_ALWAYS_EAGER)
+        self.assertEqual(settings.CELERY_BROKER_URL, 'memory://')
 
 
 class EnviarConfirmacionTareaTest(TestCase):
@@ -88,7 +99,7 @@ class EnviarConfirmacionTareaTest(TestCase):
 
 
 class TareaInvocadaDesdeVistaTest(TestCase):
-    """Verifica que las vistas invocan las tareas con .delay()."""
+    """Verifica qué vistas encolan la tarea con .delay()."""
 
     def setUp(self):
         ConfiguracionERP.get_instance()
@@ -102,14 +113,15 @@ class TareaInvocadaDesdeVistaTest(TestCase):
         )
         self.user = User.objects.create_user('viewer', password='pass')
 
-    @patch('catalogo.views.enviar_confirmacion_pedido.delay')
-    def test_pago_exitoso_llama_a_delay(self, mock_delay):
-        """pago_exitoso() debe llamar a .delay() con el pedido_id."""
+    @patch('ventas.tasks.enviar_confirmacion_pedido.delay')
+    def test_pago_exitoso_no_encola_tarea(self, mock_delay):
+        """pago_exitoso() NO encola: el webhook es el único disparo."""
         self.client.force_login(self.user)
-        self.client.get(
+        r = self.client.get(
             reverse('catalogo:pago_exitoso', args=[self.pedido.pk])
         )
-        mock_delay.assert_called_once_with(self.pedido.pk)
+        self.assertEqual(r.status_code, 200)
+        mock_delay.assert_not_called()
 
     @patch('catalogo.webhook_views.enviar_confirmacion_pedido.delay')
     @patch('catalogo.webhook_views.stripe.Webhook.construct_event')
@@ -117,7 +129,27 @@ class TareaInvocadaDesdeVistaTest(TestCase):
         self, mock_event, mock_delay
     ):
         """El webhook payment_intent.succeeded debe llamar a .delay()."""
-        mock_event.return_value = {
+        mock_event.return_value = self._evento_succeeded()
+        self._post_webhook()
+        mock_delay.assert_called_once_with(self.pedido.pk)
+
+    @patch('catalogo.webhook_views.enviar_confirmacion_pedido.delay',
+           side_effect=ConnectionError('Redis caído'))
+    @patch('catalogo.webhook_views.stripe.Webhook.construct_event')
+    def test_webhook_responde_200_aunque_redis_falle(
+        self, mock_event, mock_delay
+    ):
+        """Si Redis falla, el pago se registra y Stripe recibe 200."""
+        mock_event.return_value = self._evento_succeeded()
+        with self.assertLogs('catalogo.webhook_views', level='ERROR'):
+            r = self._post_webhook()
+        self.assertEqual(r.status_code, 200)
+        self.pedido.refresh_from_db()
+        self.assertEqual(self.pedido.estado, 'pagado')
+
+    # ── helpers ────────────────────────────────────────────────────────
+    def _evento_succeeded(self):
+        return {
             'type': 'payment_intent.succeeded',
             'data': {
                 'object': {
@@ -126,13 +158,13 @@ class TareaInvocadaDesdeVistaTest(TestCase):
                 }
             }
         }
+
+    def _post_webhook(self):
         self.pedido.items_snapshot = []
         self.pedido.save()
-
-        self.client.post(
+        return self.client.post(
             reverse('catalogo:webhook'),
             data=b'{}',
             content_type='application/json',
             HTTP_STRIPE_SIGNATURE='t=1,v1=ok'
         )
-        mock_delay.assert_called_once_with(self.pedido.pk)

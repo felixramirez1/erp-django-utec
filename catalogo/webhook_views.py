@@ -92,9 +92,8 @@ def stripe_webhook(request) -> HttpResponse:
 
 # ── HANDLERS INTERNOS ──────────────────────────────────────────────────────
 
-# En la función _manejar_pago_exitoso(), después de save():
+# En _manejar_pago_exitoso(), después de _descontar_stock():
 def _manejar_pago_exitoso(payment_intent: dict) -> None:
-    # ... (código existente) ...
     pedido_id = _extraer_pedido_id(payment_intent)
     if pedido_id is None:
         return
@@ -113,18 +112,25 @@ def _manejar_pago_exitoso(payment_intent: dict) -> None:
         )
         _descontar_stock(pedido)
 
-        # ── NUEVO W16: disparar tarea de confirmación ─────────────────
-        # El webhook es el lugar más confiable para disparar el correo:
-        # se ejecuta incluso si el usuario cerró el navegador antes de
-        # llegar a pago_exitoso().
-        enviar_confirmacion_pedido.delay(pedido.pk)
+        # ── W16: encolar la tarea de confirmación ─────────────────────
+        # El webhook es el ÚNICO punto que dispara el correo: se ejecuta
+        # aunque el usuario cierre el navegador y solo una vez por pedido.
+        # Si Redis no responde, el pago ya quedó registrado: se deja
+        # constancia en el log y se responde 200 a Stripe igualmente.
+        try:
+            enviar_confirmacion_pedido.delay(pedido.pk)
+        except Exception:
+            logger.exception(
+                f'Webhook: no se pudo encolar la confirmación del '
+                f'pedido {pedido.numero_pedido} (¿Redis disponible?).'
+            )
         # ─────────────────────────────────────────────────────────────
     else:
         logger.info(
             f'Pedido {pedido.numero_pedido} ya estaba pagado — '
             f'idempotente, sin cambios.'
         )
-
+        
 def _manejar_pago_fallido(payment_intent: dict) -> None:
     """Procesa un pago fallido o rechazado.
 

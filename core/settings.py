@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 # core/settings.py
-import sys
 import environ
 from pathlib import Path
 
@@ -20,12 +19,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env(DEBUG=(bool, True))
 environ.Env.read_env(BASE_DIR / '.env')
 
-SECRET_KEY  = env('SECRET_KEY', default='dev-key-insegura-solo-para-desarrollo')
-DEBUG       = env('DEBUG', default=True)
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['.onrender.com','localhost', '127.0.0.1'])
+SECRET_KEY    = env('SECRET_KEY', default='dev-key-insegura-solo-para-desarrollo')
+DEBUG         = env('DEBUG', default=True)
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['.onrender.com', 'localhost', '127.0.0.1'])
 
 # ── Apps instaladas ───────────────────────────────────────────────────────
-# core/settings.py — actualizar INSTALLED_APPS (terceros):
 INSTALLED_APPS = [
     'jazzmin',
     'django.contrib.admin',
@@ -40,8 +38,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'rest_framework',
-    'rest_framework.authtoken',    # ← agregar
+    'rest_framework.authtoken',
     'whitenoise.runserver_nostatic',
+    'anymail',
     # Apps del ERP
     'core',
     'clientes',
@@ -50,9 +49,7 @@ INSTALLED_APPS = [
     'ventas',
     'reportes',
     'configuracion',
-    'catalogo',                    # ← nuevo
-    # core/settings.py — en INSTALLED_APPS, después de rest_framework:
-    'anymail',    # ← agregar
+    'catalogo',
 ]
 
 MIDDLEWARE = [
@@ -64,11 +61,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',   # ← agregar al final
+    'allauth.account.middleware.AccountMiddleware',
 ]
+
 ROOT_URLCONF = 'core.urls'
 
-# core/settings.py — actualizar TEMPLATES[0]['OPTIONS']['context_processors']:
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -122,8 +119,7 @@ LOGIN_URL           = '/accounts/login/'
 LOGIN_REDIRECT_URL  = '/productos/'
 LOGOUT_REDIRECT_URL = '/'
 
-# ── DRF ──────────────────────────────────────────────────────────────────
-# core/settings.py — reemplazar la configuración REST_FRAMEWORK de W01:
+# ── DRF ───────────────────────────────────────────────────────────────────
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',   # para el navegador
@@ -137,16 +133,11 @@ REST_FRAMEWORK = {
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# core/settings.py — agregar al final del archivo
 
-# core/settings.py — agregar al final (antes de JAZZMIN_SETTINGS):
-
-# ── STRIPE (Pasarela de pago) ──────────────────────────────────────────────
-STRIPE_SECRET_KEY     = env('STRIPE_SECRET_KEY',     default='sk_test_placeholder')
+# ── STRIPE (Pasarela de pago) ─────────────────────────────────────────────
+STRIPE_SECRET_KEY      = env('STRIPE_SECRET_KEY',      default='sk_test_placeholder')
 STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY', default='pk_test_placeholder')
-STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET', default='whsec_placeholder')
-
-# core/settings.py — configuración de correo electrónico
+STRIPE_WEBHOOK_SECRET  = env('STRIPE_WEBHOOK_SECRET',  default='whsec_placeholder')
 
 # ── CORREO ELECTRÓNICO ────────────────────────────────────────────────────
 # En desarrollo: usar el backend de consola (imprime en terminal)
@@ -174,7 +165,6 @@ ADMINS = [
 SENDGRID_API_KEY = env('SENDGRID_API_KEY', default='')
 ANYMAIL = {
     'SENDGRID_API_KEY': SENDGRID_API_KEY,
-    # Reintentar envíos fallidos automáticamente
     'SEND_DEFAULTS': {
         'esp_extra': {'ip_pool_name': 'transactional'},
     },
@@ -217,56 +207,56 @@ JAZZMIN_SETTINGS = {
 
     # Iconos de Font Awesome para cada modelo
     'icons': {
-        'auth':                       'fas fa-users-cog',
-        'auth.user':                  'fas fa-user',
-        'auth.Group':                 'fas fa-users',
-        'clientes.Cliente':           'fas fa-user-tie',
-        'proveedores.Proveedor':      'fas fa-truck',
-        'productos.Categoria':        'fas fa-tags',
-        'productos.Producto':         'fas fa-box',
-        'ventas.Venta':               'fas fa-file-invoice-dollar',
-        'ventas.DetalleVenta':        'fas fa-list',
-        'ventas.Pedido':              'fas fa-shopping-cart',
+        'auth':                           'fas fa-users-cog',
+        'auth.user':                      'fas fa-user',
+        'auth.Group':                     'fas fa-users',
+        'clientes.Cliente':               'fas fa-user-tie',
+        'proveedores.Proveedor':          'fas fa-truck',
+        'productos.Categoria':            'fas fa-tags',
+        'productos.Producto':             'fas fa-box',
+        'ventas.Venta':                   'fas fa-file-invoice-dollar',
+        'ventas.DetalleVenta':            'fas fa-list',
+        'ventas.Pedido':                  'fas fa-shopping-cart',
         'configuracion.ConfiguracionERP': 'fas fa-cogs',
     },
-    'default_icon_parents': 'fas fa-folder',
+    'default_icon_parents':  'fas fa-folder',
     'default_icon_children': 'fas fa-circle',
 
     # Apariencia
-    'related_modal_active':     True,
-    'custom_css':               'erp_custom.css',   # archivo en static/
-    'show_sidebar':             True,
-    'navigation_expanded':      True,
-    'hide_apps':                [],
-    'hide_models':              [],
+    'related_modal_active': True,
+    'custom_css':           'erp_custom.css',   # archivo en static/
+    'show_sidebar':         True,
+    'navigation_expanded':  True,
+    'hide_apps':            [],
+    'hide_models':          [],
 
     # UI tweaks
-    'changeform_format':        'horizontal_tabs',
-    'language_chooser':         False,
+    'changeform_format': 'horizontal_tabs',
+    'language_chooser':  False,
 }
 
 JAZZMIN_UI_TWEAKS = {
-    'navbar_small_text':        False,
-    'footer_small_text':        False,
-    'body_small_text':          False,
-    'brand_small_text':         False,
-    'brand_colour':             'navbar-dark',
-    'accent':                   'accent-navy',
-    'navbar':                   'navbar-dark',
-    'no_navbar_border':         False,
-    'navbar_fixed':             True,
-    'layout_boxed':             False,
-    'footer_fixed':             False,
-    'sidebar_fixed':            True,
-    'sidebar':                  'sidebar-dark-navy',
-    'sidebar_nav_small_text':   False,
-    'sidebar_disable_expand':   False,
-    'sidebar_nav_child_indent': True,
+    'navbar_small_text':         False,
+    'footer_small_text':         False,
+    'body_small_text':           False,
+    'brand_small_text':          False,
+    'brand_colour':              'navbar-dark',
+    'accent':                    'accent-navy',
+    'navbar':                    'navbar-dark',
+    'no_navbar_border':          False,
+    'navbar_fixed':              True,
+    'layout_boxed':              False,
+    'footer_fixed':              False,
+    'sidebar_fixed':             True,
+    'sidebar':                   'sidebar-dark-navy',
+    'sidebar_nav_small_text':    False,
+    'sidebar_disable_expand':    False,
+    'sidebar_nav_child_indent':  True,
     'sidebar_nav_compact_style': False,
-    'sidebar_nav_legacy_style': False,
-    'sidebar_nav_flat_style':   False,
-    'theme':                    'default',
-    'dark_mode_theme':          None,
+    'sidebar_nav_legacy_style':  False,
+    'sidebar_nav_flat_style':    False,
+    'theme':                     'default',
+    'dark_mode_theme':           None,
     'button_classes': {
         'primary':   'btn-primary',
         'secondary': 'btn-secondary',
@@ -277,14 +267,27 @@ JAZZMIN_UI_TWEAKS = {
     },
 }
 
-# core/settings.py — agregar al final (después de JAZZMIN_SETTINGS):
+# ── CELERY — Cola de tareas asíncronas (W16) ──────────────────────────────
+# REDIS_URL definida (Render → Key Value):
+#     las tareas se encolan en Redis y las procesa el worker.
+# REDIS_URL vacía (laboratorio sin Docker / tests):
+#     modo EAGER → .delay() ejecuta la tarea en el mismo proceso,
+#     sin broker ni worker. El código de las vistas no cambia.
+REDIS_URL = env('REDIS_URL', default='')
 
-# ── CELERY — Cola de tareas asíncronas ────────────────────────────────────
-# Broker: Redis almacena los mensajes de las tareas pendientes
-CELERY_BROKER_URL = env('REDIS_URL', default='redis://localhost:6379/0')
+if REDIS_URL:
+    # Broker: Redis almacena los mensajes de las tareas pendientes
+    CELERY_BROKER_URL        = REDIS_URL
+    # Backend: Redis almacena los resultados de las tareas
+    CELERY_RESULT_BACKEND    = REDIS_URL
+    CELERY_TASK_ALWAYS_EAGER = False
+else:
+    CELERY_BROKER_URL        = 'memory://'
+    CELERY_RESULT_BACKEND    = 'cache+memory://'
+    CELERY_TASK_ALWAYS_EAGER = True
 
-# Backend: Redis almacena los resultados de las tareas (opcional)
-CELERY_RESULT_BACKEND = env('REDIS_URL', default='redis://localhost:6379/0')
+# Los resultados caducan en 1 hora (el Key Value gratuito tiene 25 MB)
+CELERY_RESULT_EXPIRES = 3600
 
 # Formato de serialización (JSON es seguro y portable)
 CELERY_ACCEPT_CONTENT    = ['json']
@@ -299,15 +302,13 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 # Tiempo máximo que puede correr una tarea antes de ser terminada (segundos)
 CELERY_TASK_SOFT_TIME_LIMIT = 300   # 5 minutos
-CELERY_TASK_TIME_LIMIT       = 360  # 6 minutos (hard limit)
+CELERY_TASK_TIME_LIMIT      = 360   # 6 minutos (hard limit)
 
 # Prefijo para las colas (útil si se comparte Redis entre proyectos)
 CELERY_TASK_DEFAULT_QUEUE = 'erp_django'
 
-# Para tests: ejecutar tareas sincrónicamente (sin worker)
-# Se activa en tests con @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
-CELERY_TASK_ALWAYS_EAGER         = 'test' in sys.argv
-CELERY_TASK_EAGER_PROPAGATES     = True
+# En modo EAGER, las excepciones de la tarea se propagan (útil en tests)
+CELERY_TASK_EAGER_PROPAGATES = True
 
 # ── DJANGO SITES (requerido por allauth) ──────────────────────────────────
 SITE_ID = 1
@@ -321,13 +322,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # ── ALLAUTH: configuración para desarrollo académico ──────────────────────
-ACCOUNT_LOGIN_METHODS          = {'username'}   # login por username
-ACCOUNT_EMAIL_REQUIRED         = False          # no obligar correo
-ACCOUNT_EMAIL_VERIFICATION     = 'none'         # no enviar email de verificación
-ACCOUNT_LOGOUT_ON_GET          = True           # logout sin confirmar (dev)
-ACCOUNT_SESSION_REMEMBER       = True           # recordar sesión
-
-# LOGIN_URL y LOGIN_REDIRECT_URL ya definidos en W01:
-# LOGIN_URL           = '/accounts/login/'
-# LOGIN_REDIRECT_URL  = '/productos/'
-LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_LOGIN_METHODS      = {'username'}   # login por username
+ACCOUNT_EMAIL_REQUIRED     = False          # no obligar correo
+ACCOUNT_EMAIL_VERIFICATION = 'none'         # no enviar email de verificación
+ACCOUNT_LOGOUT_ON_GET      = True           # logout sin confirmar (dev)
+ACCOUNT_SESSION_REMEMBER   = True           # recordar sesión

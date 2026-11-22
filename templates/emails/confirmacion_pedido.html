@@ -168,7 +168,7 @@
                     <td class="num">${{ item.precio }}</td>
                     <td class="num">{{ item.cantidad }}</td>
                     <td class="num">
-                        ${% widthratio item.cantidad 1 item.precio %}
+                        ${{ item.subtotal }}
                     </td>
                 </tr>
                 {% endfor %}

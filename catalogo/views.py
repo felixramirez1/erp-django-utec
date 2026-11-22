@@ -15,6 +15,7 @@ Estructura del carrito en sesión:
         ...
     }
 """
+import logging
 
 # catalogo/views.py — agregar import al inicio:
 from ventas.tasks import enviar_confirmacion_pedido
@@ -40,6 +41,7 @@ from .checkout_utils import (
     generar_numero_pedido,
     obtener_o_crear_cliente,
 )
+logger = logging.getLogger(__name__)
 
 # Configurar la clave secreta de Stripe
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -320,12 +322,6 @@ def pago_exitoso(request, pedido_id: int):
 
     # Vaciar el carrito de la sesión
     _guardar_carrito(request, {})
-
-    # ── NUEVO W16: disparar tarea asíncrona de confirmación ───────────
-    # .delay() envía la tarea al broker Redis de forma no bloqueante.
-    # El worker la ejecutará en segundo plano.
-    enviar_confirmacion_pedido.delay(pedido.pk)
-    # ──────────────────────────────────────────────────────────────────
 
     messages.success(
         request,
