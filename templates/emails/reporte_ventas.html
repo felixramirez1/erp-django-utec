@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de ventas — {{ fecha }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            background: #F5F7FA;
+            color: #1A1A2E;
+        }
+        .wrapper {
+            max-width: 640px;
+            margin: 24px auto;
+            background: #FFFFFF;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .header {
+            background: #0A2342;
+            padding: 26px 32px;
+            border-bottom: 4px solid #B8860B;
+        }
+        .header-title {
+            color: #D4AF37;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .header-sub {
+            color: rgba(255,255,255,.72);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        .body { padding: 26px 32px; }
+        /* KPI cards */
+        .kpi-grid {
+            display: table;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 8px;
+            margin-bottom: 24px;
+        }
+        .kpi-row { display: table-row; }
+        .kpi-card {
+            display: table-cell;
+            background: #E8F0FB;
+            border-radius: 8px;
+            padding: 14px 16px;
+            text-align: center;
+            width: 50%;
+        }
+        .kpi-valor {
+            font-size: 22px;
+            font-weight: bold;
+            color: #0A2342;
+        }
+        .kpi-label {
+            font-size: 12px;
+            color: #5A6A7E;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-top: 3px;
+        }
+        .kpi-card.gold .kpi-valor { color: #B8860B; }
+        /* Tabla top productos */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+        th {
+            background: #0A2342;
+            color: #FFFFFF;
+            padding: 10px 14px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            text-align: left;
+        }
+        th.num { text-align: right; }
+        td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #E8F0FB;
+            font-size: 13px;
+        }
+        td.num { text-align: right; }
+        .sin-ventas {
+            background: #FDF8E8;
+            border: 1px solid #B8860B;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            color: #5A6A7E;
+            font-size: 14px;
+            margin: 16px 0;
+        }
+        .footer {
+            background: #F5F7FA;
+            border-top: 1px solid #C8D8EC;
+            padding: 14px 32px;
+            font-size: 11px;
+            color: #5A6A7E;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <!-- ENCABEZADO -->
+    <div class="header">
+        <div class="header-title">📊 Reporte de ventas del día</div>
+        <div class="header-sub">
+            {{ config.nombre_empresa }} · {{ fecha }}
+        </div>
+    </div>
+
+    <!-- CUERPO -->
+    <div class="body">
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+            <div class="kpi-row">
+                <div class="kpi-card">
+                    <div class="kpi-valor">{{ total_pedidos }}</div>
+                    <div class="kpi-label">Pedidos pagados hoy</div>
+                </div>
+                <div class="kpi-card gold">
+                    <div class="kpi-valor">${{ total_facturado }}</div>
+                    <div class="kpi-label">Total facturado</div>
+                </div>
+            </div>
+        </div>
+
+        {% if top_productos %}
+        <p style="font-weight:600;color:#0A2342;margin-bottom:8px;">
+            Top {{ top_productos|length }} productos del día
+        </p>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Producto</th>
+                    <th class="num">Unidades vendidas</th>
+                    <th class="num">Ingreso ($)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prod in top_productos %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ prod.nombre }}</td>
+                    <td class="num">{{ prod.unidades }}</td>
+                    <td class="num">${{ prod.ingreso }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="sin-ventas">
+            Sin ventas registradas hoy. ¡Hay oportunidad de mejorar! 🎯
+        </div>
+        {% endif %}
+
+        <p style="color:#5A6A7E;font-size:12px;margin-top:12px;">
+            Panel de administración:
+            <a href="{{ url_admin }}" style="color:#0A2342;">
+                {{ url_admin }}
+            </a>
+        </p>
+    </div>
+
+    <div class="footer">
+        <p>Generado automáticamente por ERP Django a las {{ hora_programada }} (hora de México)</p>
+        <p>{{ config.nombre_empresa }}</p>
+    </div>
+
+</div>
+</body>
+</html>

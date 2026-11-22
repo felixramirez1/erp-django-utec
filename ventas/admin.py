@@ -49,7 +49,37 @@ class PedidoAdmin(admin.ModelAdmin):
     """Admin de pedidos de e-commerce."""
 
     list_display   = ['numero_pedido', 'cliente', 'estado',
-                      'fecha_pedido', 'total_pagado']
+                      'fecha_pedido', 'total_pagado', 'correo_enviado']
     search_fields  = ['numero_pedido', 'cliente__nombre']
-    list_filter    = ['estado']
+    list_filter    = ['estado', 'correo_enviado']
     readonly_fields = ['fecha_pedido']
+    actions        = ['reenviar_confirmacion']
+
+    @admin.action(description='Enviar correo de confirmación (pagados sin correo)')
+    def reenviar_confirmacion(self, request, queryset):
+        """Encola el correo de los pedidos pagados que aún no lo recibieron.
+
+        Útil si el envío falló (p. ej. Redis/SendGrid caídos): Render Free
+        no tiene Shell. La tarea es idempotente (correo_enviado).
+        """
+        from django.contrib import messages
+        from ventas.tasks import enviar_confirmacion_pedido
+
+        pendientes = queryset.filter(estado='pagado', correo_enviado=False)
+        encolados, errores = 0, 0
+        for pedido in pendientes:
+            try:
+                enviar_confirmacion_pedido.delay(pedido.pk)
+                encolados += 1
+            except Exception as exc:   # Redis caído, etc.
+                errores += 1
+                self.message_user(
+                    request, f'{pedido.numero_pedido}: {exc}', messages.ERROR
+                )
+        omitidos = queryset.count() - pendientes.count()
+        self.message_user(
+            request,
+            f'Correos encolados: {encolados}. Errores: {errores}. '
+            f'Omitidos (no pagados o ya enviados): {omitidos}.',
+            messages.SUCCESS if not errores else messages.WARNING,
+        )
